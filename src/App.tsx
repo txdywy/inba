@@ -6,6 +6,7 @@ import StandingsTable from './components/StandingsTable';
 import fallbackSnapshot from './data/fallbackSnapshot.json';
 import type { Snapshot } from './data/types';
 import { useLiveSnapshot } from './hooks/useLiveSnapshot';
+import { hideBrokenImage } from './lib/imageFallback';
 import { createPlayerHeadshotUrl, createTeamLogoUrl } from './lib/teamArtwork';
 
 interface AppProps {
@@ -32,7 +33,7 @@ export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: 
       />
 
       <div className="content-stack">
-        <section className="feature-strip" aria-label="NBA feature highlights">
+        <section className="feature-strip feature-strip--studio" aria-label="Studio desk">
           <article className="feature-card feature-card--cover feature-card--lead">
             <span className="feature-card__eyebrow">Lead story</span>
             <h2>{snapshot.headline.title}</h2>
@@ -40,12 +41,12 @@ export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: 
             {featuredGame ? (
               <div className="feature-card__matchup">
                 <div className="feature-card__matchup-team">
-                  <img src={createTeamLogoUrl(featuredGame.awayTeam.abbreviation)} alt="" aria-hidden="true" loading="lazy" />
+                  <img src={createTeamLogoUrl(featuredGame.awayTeam.abbreviation)} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
                   <span>{featuredGame.awayTeam.name}</span>
                 </div>
                 <span className="feature-card__matchup-divider">vs</span>
                 <div className="feature-card__matchup-team">
-                  <img src={createTeamLogoUrl(featuredGame.homeTeam.abbreviation)} alt="" aria-hidden="true" loading="lazy" />
+                  <img src={createTeamLogoUrl(featuredGame.homeTeam.abbreviation)} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
                   <span>{featuredGame.homeTeam.name}</span>
                 </div>
               </div>
@@ -53,7 +54,7 @@ export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: 
           </article>
 
           <article className="feature-card feature-card--image feature-card--pulse">
-            <span className="feature-card__eyebrow">Broadcast desk</span>
+            <span className="feature-card__eyebrow">Studio desk</span>
             <div className="feature-card__art feature-card__art--arena" aria-hidden="true" />
             <div className="feature-card__stats">
               <span>{liveCount} live now</span>
@@ -74,6 +75,7 @@ export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: 
                     alt=""
                     aria-hidden="true"
                     loading="lazy"
+                    onError={hideBrokenImage}
                   />
                   <img
                     className="feature-card__player-logo"
@@ -81,6 +83,7 @@ export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: 
                     alt=""
                     aria-hidden="true"
                     loading="lazy"
+                    onError={hideBrokenImage}
                   />
                 </div>
                 <div className="feature-card__player-copy">

@@ -1,10 +1,18 @@
 import type { StandingRow } from '../data/types';
+import { hideBrokenImage } from '../lib/imageFallback';
 import { createTeamLogoUrl } from '../lib/teamArtwork';
 import Section from './Section';
 
 interface StandingsTableProps {
   title: string;
   rows: StandingRow[];
+}
+
+function getSeedZone(rank: number) {
+  if (rank === 1) return 'top-seed';
+  if (rank <= 6) return 'playoff';
+  if (rank <= 10) return 'play-in';
+  return 'chase';
 }
 
 export default function StandingsTable({ title, rows }: StandingsTableProps) {
@@ -16,7 +24,7 @@ export default function StandingsTable({ title, rows }: StandingsTableProps) {
       <div className="table-wrap">
         {leader ? (
           <div className="table-lead">
-            <img className="table-lead__art" src={leaderArtwork} alt="" aria-hidden="true" loading="lazy" />
+            <img className="table-lead__art" src={leaderArtwork} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
             <div>
               <span>Front-runner</span>
               <strong>
@@ -39,14 +47,16 @@ export default function StandingsTable({ title, rows }: StandingsTableProps) {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={`${title}-${row.abbreviation}`}>
+              <tr className={`standings-row standings-row--${getSeedZone(row.rank)}`} key={`${title}-${row.abbreviation}`}>
                 <td>{row.rank}</td>
                 <td>
                   <span className="table-team-mark">
-                    <img src={createTeamLogoUrl(row.abbreviation)} alt="" aria-hidden="true" loading="lazy" />
+                    <img src={createTeamLogoUrl(row.abbreviation)} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
                   </span>
-                  <strong>{row.team}</strong>
-                  <span>{row.abbreviation}</span>
+                  <span className="table-team-copy">
+                    <strong>{row.team}</strong>
+                    <span>{row.abbreviation}</span>
+                  </span>
                 </td>
                 <td>{row.wins}</td>
                 <td>{row.losses}</td>

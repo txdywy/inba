@@ -1,4 +1,5 @@
 import type { FeaturedPlayer, PlayoffRow, StandingRow } from '../data/types';
+import { hideBrokenImage } from '../lib/imageFallback';
 import { createConferenceArtwork, createPlayerHeadshotUrl, createTeamLogoUrl } from '../lib/teamArtwork';
 import Section from './Section';
 
@@ -52,7 +53,7 @@ function ConferenceTree({
   const bestFormStanding = bestForm;
 
   return (
-    <article className="bracket-column bracket-column--tree">
+    <article className="bracket-column bracket-column--tree bracket-column--studio">
       <div className="bracket-column__art tree-column__art" aria-hidden="true" style={{ backgroundImage: `url(${artwork})` }} />
       <div className="tree-column__header">
         <div>
@@ -76,6 +77,7 @@ function ConferenceTree({
                 alt=""
                 aria-hidden="true"
                 loading="lazy"
+                onError={hideBrokenImage}
               />
               <div>
                 <strong>{topSeed.team}</strong>
@@ -99,6 +101,7 @@ function ConferenceTree({
                 alt=""
                 aria-hidden="true"
                 loading="lazy"
+                onError={hideBrokenImage}
               />
               <div>
                 <strong>{bestForm.team}</strong>
@@ -116,7 +119,7 @@ function ConferenceTree({
           <span className="tree-signal__eyebrow">Star highlight</span>
           {star ? (
             <div className="tree-signal__player">
-              <img className="tree-signal__portrait" src={createPlayerHeadshotUrl(star.playerId)} alt="" aria-hidden="true" loading="lazy" />
+              <img className="tree-signal__portrait" src={createPlayerHeadshotUrl(star.playerId)} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
               <div>
                 <strong>{star.name}</strong>
                 <span>
@@ -140,7 +143,7 @@ function ConferenceTree({
             <article className={`tree-node tree-node--${row.status}`} key={`${title}-${row.seed}`}>
               <span className="tree-node__seed">#{row.seed}</span>
               <div className="tree-node__team">
-                <img className="tree-node__logo" src={createTeamLogoUrl(abbreviation)} alt="" aria-hidden="true" loading="lazy" />
+                <img className="tree-node__logo" src={createTeamLogoUrl(abbreviation)} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
                 <div>
                   <strong>{row.team}</strong>
                   <span>{standing ? formatRecord(standing) : 'Record unavailable'}</span>
@@ -169,7 +172,7 @@ export default function PlayoffPicture({ east, west, standings, featuredPlayers 
     <Section
       eyebrow="Postseason"
       title="Playoff picture"
-      subtitle="Bracket tree, momentum cards, and star watch."
+      subtitle="Bracket studio with seed paths, momentum cards, and star watch."
     >
       <div className="bracket-grid bracket-grid--tree">
         <ConferenceTree title="East" rows={east} standingsRows={standings.east} featuredPlayers={featuredPlayers} />
