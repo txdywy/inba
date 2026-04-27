@@ -1,5 +1,5 @@
 import type { StandingRow } from '../data/types';
-import { createTeamInitials, createTeamLogoUrl } from '../lib/teamArtwork';
+import { createTeamLogoUrl } from '../lib/teamArtwork';
 import Section from './Section';
 
 interface StandingsTableProps {
@@ -16,7 +16,7 @@ export default function StandingsTable({ title, rows }: StandingsTableProps) {
       <div className="table-wrap">
         {leader ? (
           <div className="table-lead">
-            <img className="table-lead__art" src={leaderArtwork} alt="" aria-hidden="true" />
+            <img className="table-lead__art" src={leaderArtwork} alt="" aria-hidden="true" loading="lazy" />
             <div>
               <span>Front-runner</span>
               <strong>
@@ -42,7 +42,9 @@ export default function StandingsTable({ title, rows }: StandingsTableProps) {
               <tr key={`${title}-${row.abbreviation}`}>
                 <td>{row.rank}</td>
                 <td>
-                  <span className="table-team-mark">{createTeamInitials(row.team)}</span>
+                  <span className="table-team-mark">
+                    <img src={createTeamLogoUrl(row.abbreviation)} alt="" aria-hidden="true" loading="lazy" />
+                  </span>
                   <strong>{row.team}</strong>
                   <span>{row.abbreviation}</span>
                 </td>

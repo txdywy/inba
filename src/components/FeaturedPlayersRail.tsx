@@ -20,7 +20,7 @@ export default function FeaturedPlayersRail({ players }: FeaturedPlayersRailProp
       {players.length === 0 ? (
         <p className="empty-state">Player spotlight will appear when the league stats board is available.</p>
       ) : (
-        <div className="player-grid">
+        <div className="player-grid player-grid--rail">
           {players.map((player, index) => (
             <article className={`player-card player-card--tone-${index % 3}`} key={player.playerId}>
               <div className="player-card__portrait">
@@ -37,6 +37,7 @@ export default function FeaturedPlayersRail({ players }: FeaturedPlayersRailProp
                   src={createTeamLogoUrl(player.teamAbbreviation)}
                   alt=""
                   aria-hidden="true"
+                  loading="lazy"
                 />
               </div>
               <div className="player-card__body">
