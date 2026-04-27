@@ -1,5 +1,5 @@
 import type { GameCard as GameCardData } from '../data/types';
-import { createMatchupArtwork, createTeamInitials } from '../lib/teamArtwork';
+import { createTeamInitials, createTeamLogoUrl } from '../lib/teamArtwork';
 
 interface GameCardProps {
   game: GameCardData;
@@ -7,26 +7,21 @@ interface GameCardProps {
 }
 
 export default function GameCard({ game, index }: GameCardProps) {
-  const artwork = createMatchupArtwork(
-    game.awayTeam.name,
-    game.awayTeam.abbreviation,
-    game.homeTeam.name,
-    game.homeTeam.abbreviation,
-  );
-  const awayInitials = createTeamInitials(game.awayTeam.name);
-  const homeInitials = createTeamInitials(game.homeTeam.name);
+  const awayLogo = createTeamLogoUrl(game.awayTeam.abbreviation);
+  const homeLogo = createTeamLogoUrl(game.homeTeam.abbreviation);
 
   return (
     <article className={`game-card game-card--${game.status} game-card--tone-${index % 3}`}>
-      <div className="game-card__poster" aria-hidden="true" style={{ backgroundImage: `url(${artwork})` }}>
+      <div className="game-card__poster" aria-hidden="true">
+        <img className="game-card__poster-logo game-card__poster-logo--away" src={awayLogo} alt="" aria-hidden="true" />
+        <span className="game-card__poster-vs">VS</span>
+        <img className="game-card__poster-logo game-card__poster-logo--home" src={homeLogo} alt="" aria-hidden="true" />
         <span className="game-card__poster-glow" />
-        <div className="game-card__poster-badge game-card__poster-badge--away">{awayInitials}</div>
-        <div className="game-card__poster-badge game-card__poster-badge--home">{homeInitials}</div>
       </div>
       <div className="game-card__meta">
         <span className={`status-pill status-pill--${game.status}`}>{game.status}</span>
-        <span>{game.periodLabel}</span>
-        <span>{game.clock}</span>
+        <span className="game-card__period">{game.periodLabel}</span>
+        <span className="game-card__clock">{game.clock}</span>
       </div>
       <div className="game-card__teams">
         <div>

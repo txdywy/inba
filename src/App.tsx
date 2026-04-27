@@ -12,7 +12,7 @@ interface AppProps {
 }
 
 export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: AppProps) {
-  const snapshot = useLiveSnapshot(initialSnapshot);
+  const { snapshot, isRefreshing } = useLiveSnapshot(initialSnapshot);
   const liveCount = snapshot.games.filter((game) => game.status === 'live').length;
   const scheduledCount = snapshot.games.filter((game) => game.status === 'scheduled').length;
   const finalCount = snapshot.games.filter((game) => game.status === 'final').length;
@@ -24,6 +24,7 @@ export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: 
         liveCount={liveCount}
         scheduledCount={scheduledCount}
         finalCount={finalCount}
+        isRefreshing={isRefreshing}
       />
 
       <div className="content-stack">

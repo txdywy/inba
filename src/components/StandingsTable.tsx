@@ -1,5 +1,5 @@
 import type { StandingRow } from '../data/types';
-import { createConferenceArtwork, createTeamInitials } from '../lib/teamArtwork';
+import { createConferenceArtwork, createTeamInitials, createTeamLogoUrl } from '../lib/teamArtwork';
 import Section from './Section';
 
 interface StandingsTableProps {
@@ -9,7 +9,7 @@ interface StandingsTableProps {
 
 export default function StandingsTable({ title, rows }: StandingsTableProps) {
   const leader = rows[0];
-  const leaderArtwork = leader ? createConferenceArtwork(title) : '';
+  const leaderArtwork = leader ? createTeamLogoUrl(leader.abbreviation) : '';
 
   return (
     <Section eyebrow="League table" title={title} subtitle="Ranked by current snapshot data.">

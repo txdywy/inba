@@ -8,8 +8,11 @@ interface PlayoffPictureProps {
 }
 
 function ConferenceBracket({ title, rows }: { title: string; rows: PlayoffRow[] }) {
+  const artwork = createConferenceArtwork(title);
+
   return (
     <div className="bracket-column">
+      <div className="bracket-column__art" aria-hidden="true" style={{ backgroundImage: `url(${artwork})` }} />
       <div className="bracket-column__header">
         <div>
           <span>{title} conference</span>

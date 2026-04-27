@@ -3,6 +3,7 @@ import type { Snapshot } from '../data/types';
 
 export function useLiveSnapshot(initialSnapshot: Snapshot) {
   const [snapshot, setSnapshot] = useState(initialSnapshot);
+  const [isRefreshing, setIsRefreshing] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -22,6 +23,9 @@ export function useLiveSnapshot(initialSnapshot: Snapshot) {
       })
       .catch(() => {
         // Keep the static snapshot visible when the refresh request fails.
+      })
+      .finally(() => {
+        setIsRefreshing(false);
       });
 
     return () => {
@@ -29,5 +33,5 @@ export function useLiveSnapshot(initialSnapshot: Snapshot) {
     };
   }, []);
 
-  return snapshot;
+  return { snapshot, isRefreshing };
 }
