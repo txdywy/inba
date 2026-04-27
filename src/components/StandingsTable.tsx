@@ -1,34 +1,63 @@
+import { useMemo, useState } from 'react';
 import type { StandingRow } from '../data/types';
 import { hideBrokenImage } from '../lib/imageFallback';
 import { createTeamLogoUrl } from '../lib/teamArtwork';
 import Section from './Section';
 
+type ConferenceKey = 'east' | 'west';
+
 interface StandingsTableProps {
-  title: string;
-  rows: StandingRow[];
+  eastRows: StandingRow[];
+  westRows: StandingRow[];
 }
 
-function getSeedZone(rank: number) {
-  if (rank === 1) return 'top-seed';
-  if (rank <= 6) return 'playoff';
-  if (rank <= 10) return 'play-in';
-  return 'chase';
+function renderRecord(row: StandingRow) {
+  return `${row.wins}-${row.losses}`;
 }
 
-export default function StandingsTable({ title, rows }: StandingsTableProps) {
-  const leader = rows[0];
+export default function StandingsTable({ eastRows, westRows }: StandingsTableProps) {
+  const [activeConference, setActiveConference] = useState<ConferenceKey>('east');
+
+  const conference = useMemo(() => {
+    return activeConference === 'east'
+      ? { key: 'east' as const, label: 'East', rows: eastRows }
+      : { key: 'west' as const, label: 'West', rows: westRows };
+  }, [activeConference, eastRows, westRows]);
+
+  const leader = conference.rows[0];
   const leaderArtwork = leader ? createTeamLogoUrl(leader.abbreviation) : '';
 
   return (
-    <Section eyebrow="League table" title={title} subtitle="Ranked by current snapshot data.">
-      <div className="table-wrap">
+    <Section eyebrow="League table" title="Standings" subtitle="Toggle between conferences without leaving the right rail.">
+      <div className="standings-switcher" role="tablist" aria-label="Conference standings">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeConference === 'east'}
+          className={`standings-switcher__tab standings-switcher__tab--${activeConference === 'east' ? 'active' : 'idle'}`}
+          onClick={() => setActiveConference('east')}
+        >
+          East
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeConference === 'west'}
+          className={`standings-switcher__tab standings-switcher__tab--${activeConference === 'west' ? 'active' : 'idle'}`}
+          onClick={() => setActiveConference('west')}
+        >
+          West
+        </button>
+      </div>
+
+      <div className="table-wrap" role="tabpanel" aria-label={`${conference.label} standings`}>
         {leader ? (
           <div className="table-lead">
             <img className="table-lead__art" src={leaderArtwork} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
             <div>
-              <span>Front-runner</span>
+              <span>{conference.label} leader</span>
               <strong>
-                {leader.team} · {leader.wins}-{leader.losses}
+                {leader.team} · {renderRecord(leader)}
               </strong>
             </div>
           </div>
@@ -46,17 +75,15 @@ export default function StandingsTable({ title, rows }: StandingsTableProps) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
-              <tr className={`standings-row standings-row--${getSeedZone(row.rank)}`} key={`${title}-${row.abbreviation}`}>
+            {conference.rows.map((row) => (
+              <tr key={`${conference.key}-${row.abbreviation}`}>
                 <td>{row.rank}</td>
                 <td>
                   <span className="table-team-mark">
                     <img src={createTeamLogoUrl(row.abbreviation)} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
                   </span>
-                  <span className="table-team-copy">
-                    <strong>{row.team}</strong>
-                    <span>{row.abbreviation}</span>
-                  </span>
+                  <strong>{row.team}</strong>
+                  <span>{row.abbreviation}</span>
                 </td>
                 <td>{row.wins}</td>
                 <td>{row.losses}</td>
