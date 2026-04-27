@@ -1,4 +1,4 @@
-import type { GameCard, LeaguePhase, PlayoffRow, Snapshot, StandingRow, TeamLine } from './types';
+import type { FeaturedPlayer, GameCard, LeaguePhase, PlayoffRow, Snapshot, StandingRow, TeamLine } from './types';
 
 function assertObject(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -89,6 +89,23 @@ function mapPlayoffRow(value: unknown): PlayoffRow {
   };
 }
 
+function mapFeaturedPlayer(value: unknown): FeaturedPlayer {
+  const player = assertObject(value);
+
+  return {
+    playerId: asNumber(player.playerId ?? player.player_id ?? player.PLAYER_ID ?? player.PlayerID),
+    name: asString(player.name ?? player.player_name ?? player.PLAYER_NAME ?? player.PlayerName, 'Unknown Player'),
+    teamAbbreviation: asString(
+      player.teamAbbreviation ?? player.team_abbreviation ?? player.TEAM_ABBREVIATION ?? player.TeamAbbreviation,
+      'UNK'
+    ),
+    points: asNumber(player.points ?? player.pts ?? player.PTS),
+    rebounds: asNumber(player.rebounds ?? player.reb ?? player.REB),
+    assists: asNumber(player.assists ?? player.ast ?? player.AST),
+    minutes: asNumber(player.minutes ?? player.min ?? player.MIN)
+  };
+}
+
 function ensureArray(value: unknown, label: string): unknown[] {
   if (!Array.isArray(value)) {
     throw new Error(`NBA snapshot payload is missing ${label}`);
@@ -104,6 +121,7 @@ export function normalizeProviderSnapshot(raw: unknown): Snapshot {
   const standings = assertObject(payload.standings ?? {});
   const playoffs = assertObject(payload.playoff_picture ?? payload.playoffs ?? {});
   const headline = assertObject(payload.headline ?? payload.top_story ?? {});
+  const featuredPlayerSource = payload.featured_players ?? payload.featuredPlayers;
 
   return {
     generatedAt,
@@ -113,6 +131,7 @@ export function normalizeProviderSnapshot(raw: unknown): Snapshot {
       subtitle: asString(headline.subtitle, 'Latest games, standings, and playoff context')
     },
     games: scoreboard.map(mapGame),
+    featuredPlayers: Array.isArray(featuredPlayerSource) ? featuredPlayerSource.map(mapFeaturedPlayer) : [],
     standings: {
       east: ensureArray(standings.east ?? standings.eastern_conference, 'east standings').map((row, index) =>
         mapStandingRow(row, index + 1)

@@ -64,10 +64,34 @@ const standingsFixture = {
   ]
 };
 
+const playerStatsFixture = {
+  resultSets: [
+    {
+      name: 'LeagueDashPlayerStats',
+      headers: ['PLAYER_ID', 'PLAYER_NAME', 'TEAM_ABBREVIATION', 'PTS', 'REB', 'AST', 'MIN'],
+      rowSet: [
+        [1629029, 'Luka Dončić', 'LAL', 33.5, 7.7, 8.3, 35.8],
+        [1628983, 'Shai Gilgeous-Alexander', 'OKC', 31.1, 4.3, 6.6, 33.2],
+        [1630162, 'Anthony Edwards', 'MIN', 28.8, 5, 3.7, 35],
+        [1627759, 'Jaylen Brown', 'BOS', 28.7, 6.9, 5.1, 34.4],
+        [1630178, 'Tyrese Maxey', 'PHI', 28.3, 4.1, 6.6, 38],
+        [1628378, 'Donovan Mitchell', 'CLE', 27.9, 4.5, 5.7, 33.5],
+        [202695, 'Kawhi Leonard', 'LAC', 27.9, 6.4, 3.6, 32.1],
+        [203999, 'Nikola Jokić', 'DEN', 27.7, 12.9, 10.7, 34.8],
+        [203507, 'Giannis Antetokounmpo', 'MIL', 27.6, 9.8, 5.4, 28.9]
+      ]
+    }
+  ]
+};
+
 describe('fetchNbaStatsRawSnapshot', () => {
-  it('combines scoreboard and standings payloads into the raw snapshot contract', async () => {
+  it('combines scoreboard, standings, and player payloads into the raw snapshot contract', async () => {
     const fetchImpl: typeof fetch = async (input) => {
-      const payload = String(input).includes('scoreboardv2') ? scoreboardFixture : standingsFixture;
+      const payload = String(input).includes('scoreboardv2')
+        ? scoreboardFixture
+        : String(input).includes('leaguedashplayerstats')
+          ? playerStatsFixture
+          : standingsFixture;
       return {
         ok: true,
         json: async () => payload
@@ -77,6 +101,8 @@ describe('fetchNbaStatsRawSnapshot', () => {
     const snapshot = await fetchNbaStatsRawSnapshot({ fetchImpl });
 
     expect(snapshot.scoreboard).toHaveLength(2);
+    expect(snapshot.featured_players).toHaveLength(8);
+    expect(snapshot.featured_players[0]).toMatchObject({ playerId: 1629029, name: 'Luka Dončić', teamAbbreviation: 'LAL' });
     expect(snapshot.standings.east[0]).toMatchObject({ team: 'Boston Celtics', abbreviation: 'BOS' });
     expect(snapshot.standings.west[0]).toMatchObject({ team: 'Denver Nuggets', abbreviation: 'DEN' });
     expect(snapshot.playoffs.west[0]).toMatchObject({ seed: 1, matchup: 'vs. 8 seed' });

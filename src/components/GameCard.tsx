@@ -1,5 +1,5 @@
 import type { GameCard as GameCardData } from '../data/types';
-import { createTeamInitials, createTeamLogoUrl } from '../lib/teamArtwork';
+import { createTeamLogoUrl } from '../lib/teamArtwork';
 
 interface GameCardProps {
   game: GameCardData;

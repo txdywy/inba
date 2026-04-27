@@ -13,6 +13,7 @@ const snapshot: Snapshot = {
     subtitle: '8 games on deck'
   },
   games: [],
+  featuredPlayers: [],
   standings: { east: [], west: [] },
   playoffPicture: { east: [], west: [] }
 };

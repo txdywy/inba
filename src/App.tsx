@@ -1,5 +1,6 @@
-import HeroSnapshot from './components/HeroSnapshot';
+import FeaturedPlayersRail from './components/FeaturedPlayersRail';
 import GamesRail from './components/GamesRail';
+import HeroSnapshot from './components/HeroSnapshot';
 import PlayoffPicture from './components/PlayoffPicture';
 import Section from './components/Section';
 import StandingsTable from './components/StandingsTable';
@@ -54,6 +55,7 @@ export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: 
           </article>
         </section>
 
+        <FeaturedPlayersRail players={snapshot.featuredPlayers ?? []} />
         <GamesRail games={snapshot.games} />
 
         <div className="conference-stack">
@@ -68,9 +70,7 @@ export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: 
           title="Favorite teams"
           subtitle="Reserved for a future watchlist without changing the main layout."
         >
-          <p className="empty-state">
-            A future version can pin selected teams here without changing the snapshot contract.
-          </p>
+          <p className="empty-state">A future version can pin selected teams here without changing the snapshot contract.</p>
         </Section>
       </div>
     </main>

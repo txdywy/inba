@@ -8,6 +8,7 @@ export interface Snapshot {
     subtitle: string;
   };
   games: GameCard[];
+  featuredPlayers: FeaturedPlayer[];
   standings: {
     east: StandingRow[];
     west: StandingRow[];
@@ -31,6 +32,16 @@ export interface TeamLine {
   name: string;
   abbreviation: string;
   score: number | null;
+}
+
+export interface FeaturedPlayer {
+  playerId: number;
+  name: string;
+  teamAbbreviation: string;
+  points: number;
+  rebounds: number;
+  assists: number;
+  minutes: number;
 }
 
 export interface StandingRow {

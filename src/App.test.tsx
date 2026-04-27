@@ -6,7 +6,8 @@ describe('App shell', () => {
   it('renders the NBA Live Hub headline and main landmark', () => {
     render(<App />);
 
-    expect(screen.getByRole('heading', { name: /playoff race tightens/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /playoff picture taking shape/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /featured players/i, level: 2 })).toBeInTheDocument();
     expect(screen.getByRole('main')).toBeInTheDocument();
   });
 });

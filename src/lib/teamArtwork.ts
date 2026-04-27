@@ -166,6 +166,10 @@ export function createTeamLogoUrl(abbreviation: string) {
   return `https://cdn.nba.com/logos/nba/${teamId}/primary/L/logo.svg`;
 }
 
+export function createPlayerHeadshotUrl(playerId: number) {
+  return `https://cdn.nba.com/headshots/nba/latest/1040x760/${playerId}.png`;
+}
+
 export function createMatchupArtwork(
   awayTeamName: string,
   awayAbbreviation: string,

@@ -1,5 +1,5 @@
 import type { StandingRow } from '../data/types';
-import { createConferenceArtwork, createTeamInitials, createTeamLogoUrl } from '../lib/teamArtwork';
+import { createTeamInitials, createTeamLogoUrl } from '../lib/teamArtwork';
 import Section from './Section';
 
 interface StandingsTableProps {

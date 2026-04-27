@@ -19,6 +19,7 @@ type RawSnapshot = {
     subtitle: string;
   };
   scoreboard: unknown[];
+  featured_players: unknown[];
   standings: {
     east: unknown[];
     west: unknown[];
@@ -87,6 +88,19 @@ type StandingRow = JsonRecord & {
   CONFERENCE_RANK?: number;
   PlayoffRank?: number;
   Rank?: number;
+};
+
+type PlayerStatRow = JsonRecord & {
+  PLAYER_ID?: number;
+  PlayerID?: number;
+  PLAYER_NAME?: string;
+  PlayerName?: string;
+  TEAM_ABBREVIATION?: string;
+  TeamAbbreviation?: string;
+  PTS?: number;
+  REB?: number;
+  AST?: number;
+  MIN?: number;
 };
 
 type GameCard = {
@@ -233,6 +247,18 @@ function parseTeamLine(lineScoreRow: LineScoreRow) {
   };
 }
 
+function parsePlayerStat(playerRow: PlayerStatRow) {
+  return {
+    playerId: numberValue(playerRow.PLAYER_ID ?? playerRow.PlayerID),
+    name: stringValue(playerRow.PLAYER_NAME ?? playerRow.PlayerName, 'Unknown Player'),
+    teamAbbreviation: stringValue(playerRow.TEAM_ABBREVIATION ?? playerRow.TeamAbbreviation, 'UNK'),
+    points: numberValue(playerRow.PTS, 0),
+    rebounds: numberValue(playerRow.REB, 0),
+    assists: numberValue(playerRow.AST, 0),
+    minutes: numberValue(playerRow.MIN, 0)
+  };
+}
+
 function deriveGames(scoreboardPayload: StatsResponse): GameCard[] {
   const gameHeader = rowsToObjects(findResultSet(scoreboardPayload, ['GameHeader'])) as JsonRecord[];
   const lineScore = rowsToObjects(findResultSet(scoreboardPayload, ['LineScore'])) as LineScoreRow[];
@@ -294,6 +320,30 @@ function derivePlayoffRows(rows: ReturnType<typeof deriveStandingsRows>) {
   });
 }
 
+function deriveFeaturedPlayers(playerStatsPayload: StatsResponse) {
+  const rows = rowsToObjects(findResultSet(playerStatsPayload, ['LeagueDashPlayerStats'])) as PlayerStatRow[];
+  const featured: ReturnType<typeof parsePlayerStat>[] = [];
+  const seenTeams = new Set<string>();
+
+  for (const row of rows.sort((left, right) => numberValue(right.PTS, 0) - numberValue(left.PTS, 0))) {
+    const player = parsePlayerStat(row);
+    const teamKey = player.teamAbbreviation.toUpperCase();
+
+    if (seenTeams.has(teamKey)) {
+      continue;
+    }
+
+    seenTeams.add(teamKey);
+    featured.push(player);
+
+    if (featured.length === 8) {
+      break;
+    }
+  }
+
+  return featured;
+}
+
 function deriveHeadline(games: GameCard[], phase: RawSnapshot['phase']) {
   const liveCount = games.filter((game) => game.status === 'live').length;
   const scheduledCount = games.filter((game) => game.status === 'scheduled').length;
@@ -330,8 +380,20 @@ export async function fetchNbaStatsRawSnapshot({
     LeagueID: '00',
     Season: deriveSeason(),
     SeasonType: 'Regular Season'
+  }),
+  playerStatsUrl = createStatsUrl('leaguedashplayerstats', {
+    LeagueID: '00',
+    Season: deriveSeason(),
+    SeasonType: 'Regular Season',
+    PerMode: 'PerGame',
+    MeasureType: 'Base',
+    TeamID: '0',
+    Rank: 'N',
+    Month: '0',
+    Period: '0'
   })
 } = {}): Promise<RawSnapshot> {
+  const playerStatsResponsePromise = fetchImpl(playerStatsUrl, { headers: DEFAULT_HEADERS });
   const [scoreboardResponse, standingsResponse] = await Promise.all([
     fetchImpl(scoreboardUrl, { headers: DEFAULT_HEADERS }),
     fetchImpl(standingsUrl, { headers: DEFAULT_HEADERS })
@@ -350,6 +412,18 @@ export async function fetchNbaStatsRawSnapshot({
     standingsResponse.json()
   ])) as [StatsResponse, StatsResponse];
 
+  let featuredPlayers: ReturnType<typeof parsePlayerStat>[] = [];
+
+  try {
+    const playerStatsResponse = await playerStatsResponsePromise;
+    if (playerStatsResponse.ok) {
+      const playerStatsPayload = (await playerStatsResponse.json()) as StatsResponse;
+      featuredPlayers = deriveFeaturedPlayers(playerStatsPayload);
+    }
+  } catch {
+    featuredPlayers = [];
+  }
+
   const games = deriveGames(scoreboardPayload);
   const east = deriveStandingsRows(standingsPayload, 'east');
   const west = deriveStandingsRows(standingsPayload, 'west');
@@ -360,6 +434,7 @@ export async function fetchNbaStatsRawSnapshot({
     phase,
     top_story: deriveHeadline(games, phase),
     scoreboard: games,
+    featured_players: featuredPlayers,
     standings: {
       east,
       west
