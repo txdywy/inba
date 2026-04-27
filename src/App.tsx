@@ -4,21 +4,31 @@ import HeroSnapshot from './components/HeroSnapshot';
 import PlayoffPicture from './components/PlayoffPicture';
 import StandingsTable from './components/StandingsTable';
 import fallbackSnapshot from './data/fallbackSnapshot.json';
-import type { Snapshot } from './data/types';
+import type { LeaguePhase, Snapshot } from './data/types';
 import { useLiveSnapshot } from './hooks/useLiveSnapshot';
-import { createPlayerHeadshotUrl, createTeamLogoUrl } from './lib/teamArtwork';
 
 interface AppProps {
   initialSnapshot?: Snapshot;
 }
 
+const phaseLabels: Record<LeaguePhase, string> = {
+  regularSeason: 'Regular season',
+  playIn: 'Play-in race',
+  playoffs: 'Playoffs'
+};
+
 export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: AppProps) {
   const { snapshot, isRefreshing } = useLiveSnapshot(initialSnapshot);
+  const featuredPlayers = snapshot.featuredPlayers ?? [];
   const liveCount = snapshot.games.filter((game) => game.status === 'live').length;
   const scheduledCount = snapshot.games.filter((game) => game.status === 'scheduled').length;
   const finalCount = snapshot.games.filter((game) => game.status === 'final').length;
   const featuredGame = snapshot.games[0];
-  const leadPlayer = snapshot.featuredPlayers[0];
+  const leadPlayer = featuredPlayers[0];
+  const eastLeader = snapshot.standings.east[0];
+  const westLeader = snapshot.standings.west[0];
+  const phaseLabel = phaseLabels[snapshot.leaguePhase];
+  const railPlayers = featuredPlayers.slice(0, 4);
 
   return (
     <main className="app-shell">
@@ -28,74 +38,61 @@ export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: 
         scheduledCount={scheduledCount}
         finalCount={finalCount}
         isRefreshing={isRefreshing}
-        featuredPlayers={snapshot.featuredPlayers ?? []}
+        featuredPlayers={featuredPlayers}
       />
 
       <div className="content-stack">
-        <section className="feature-strip" aria-label="NBA feature highlights">
-          <article className="feature-card feature-card--cover feature-card--lead">
-            <span className="feature-card__eyebrow">Lead story</span>
-            <h2>{snapshot.headline.title}</h2>
-            <p>{snapshot.headline.subtitle}</p>
-            {featuredGame ? (
-              <div className="feature-card__matchup">
-                <div className="feature-card__matchup-team">
-                  <img src={createTeamLogoUrl(featuredGame.awayTeam.abbreviation)} alt="" aria-hidden="true" loading="lazy" />
-                  <span>{featuredGame.awayTeam.name}</span>
-                </div>
-                <span className="feature-card__matchup-divider">vs</span>
-                <div className="feature-card__matchup-team">
-                  <img src={createTeamLogoUrl(featuredGame.homeTeam.abbreviation)} alt="" aria-hidden="true" loading="lazy" />
-                  <span>{featuredGame.homeTeam.name}</span>
-                </div>
-              </div>
-            ) : null}
+        <section className="briefing-band" aria-label="Editorial briefing">
+          <article className="briefing-card briefing-card--story">
+            <span className="briefing-card__eyebrow">Tonight&apos;s angle</span>
+            <h2>What the desk is watching</h2>
+            <p>
+              The page now opens with one central storyline, then hands off to playoff pressure, live scoreboard movement, and
+              the players most likely to bend the night.
+            </p>
+            <ul className="briefing-card__list">
+              <li>{featuredGame ? `${featuredGame.awayTeam.name} at ${featuredGame.homeTeam.name} anchors the lead window.` : 'No spotlight matchup is currently set.'}</li>
+              <li>{leadPlayer ? `${leadPlayer.name} enters as the featured shot-creator at ${leadPlayer.points.toFixed(1)} points per game.` : 'Player spotlight returns when the scoring board is available.'}</li>
+              <li>{phaseLabel} remains the framing device across every module on the page.</li>
+            </ul>
           </article>
 
-          <article className="feature-card feature-card--image feature-card--pulse">
-            <span className="feature-card__eyebrow">Broadcast desk</span>
-            <div className="feature-card__art feature-card__art--arena" aria-hidden="true" />
-            <div className="feature-card__stats">
-              <span>{liveCount} live now</span>
-              <span>{scheduledCount} on deck</span>
-              <span>{finalCount} wrapped</span>
-              <span>{snapshot.leaguePhase}</span>
+          <article className="briefing-card briefing-card--pulse">
+            <span className="briefing-card__eyebrow">Live pulse</span>
+            <h2>Snapshot rhythm</h2>
+            <div className="briefing-card__metrics" aria-label="Snapshot rhythm metrics">
+              <div>
+                <strong>{liveCount}</strong>
+                <span>live windows</span>
+              </div>
+              <div>
+                <strong>{scheduledCount}</strong>
+                <span>still to tip</span>
+              </div>
+              <div>
+                <strong>{finalCount}</strong>
+                <span>already wrapped</span>
+              </div>
             </div>
+            <p className="briefing-card__note">Updated on publish cadence so the page reads like a live production rundown instead of a static slate.</p>
           </article>
 
-          <article className="feature-card feature-card--player">
-            <span className="feature-card__eyebrow">Star watch</span>
-            {leadPlayer ? (
-              <div className="feature-card__player-wrap">
-                <div className="feature-card__player-media">
-                  <img
-                    className="feature-card__player-photo"
-                    src={createPlayerHeadshotUrl(leadPlayer.playerId)}
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                  />
-                  <img
-                    className="feature-card__player-logo"
-                    src={createTeamLogoUrl(leadPlayer.teamAbbreviation)}
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="feature-card__player-copy">
-                  <strong>{leadPlayer.name}</strong>
-                  <span>{leadPlayer.teamAbbreviation} lead option</span>
-                  <div className="feature-card__stats">
-                    <span>{leadPlayer.points.toFixed(1)} PTS</span>
-                    <span>{leadPlayer.rebounds.toFixed(1)} REB</span>
-                    <span>{leadPlayer.assists.toFixed(1)} AST</span>
-                  </div>
-                </div>
+          <article className="briefing-card briefing-card--leaders">
+            <span className="briefing-card__eyebrow">Conference leaders</span>
+            <h2>Where the weight sits</h2>
+            <div className="briefing-card__leaders">
+              <div>
+                <span>East</span>
+                <strong>{eastLeader ? eastLeader.team : 'Waiting on standings'}</strong>
+                <small>{eastLeader ? `${eastLeader.wins}-${eastLeader.losses} · ${eastLeader.last10} last 10` : 'Standings not available'}</small>
               </div>
-            ) : (
-              <p className="empty-state">Player spotlight will appear when the league stats board is available.</p>
-            )}
+              <div>
+                <span>West</span>
+                <strong>{westLeader ? westLeader.team : 'Waiting on standings'}</strong>
+                <small>{westLeader ? `${westLeader.wins}-${westLeader.losses} · ${westLeader.last10} last 10` : 'Standings not available'}</small>
+              </div>
+            </div>
+            <p className="briefing-card__note">These are the clubs every downstream module should feel oriented around.</p>
           </article>
         </section>
 
@@ -105,18 +102,15 @@ export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: 
               east={snapshot.playoffPicture.east}
               west={snapshot.playoffPicture.west}
               standings={snapshot.standings}
-              featuredPlayers={snapshot.featuredPlayers}
+              featuredPlayers={featuredPlayers}
             />
             <GamesRail games={snapshot.games} />
           </div>
 
-          <div className="editorial-grid__rail">
-            <FeaturedPlayersRail players={snapshot.featuredPlayers ?? []} />
-            <div className="standings-stack">
-              <StandingsTable title="Standings — East" rows={snapshot.standings.east} />
-              <StandingsTable title="Standings — West" rows={snapshot.standings.west} />
-            </div>
-          </div>
+          <aside className="editorial-grid__rail" aria-label="League context">
+            <StandingsTable eastRows={snapshot.standings.east} westRows={snapshot.standings.west} />
+            <FeaturedPlayersRail players={railPlayers} />
+          </aside>
         </div>
       </div>
     </main>
