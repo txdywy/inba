@@ -15,8 +15,8 @@ export default function GamesRail({ games }: GamesRailProps) {
     >
       <div className="games-grid">
         {games.length === 0 ? <p className="empty-state">No games are currently listed.</p> : null}
-        {games.map((game) => (
-          <GameCard key={game.id} game={game} />
+        {games.map((game, index) => (
+          <GameCard key={game.id} game={game} index={index} />
         ))}
       </div>
     </Section>

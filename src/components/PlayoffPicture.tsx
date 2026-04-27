@@ -9,7 +9,10 @@ interface PlayoffPictureProps {
 function ConferenceBracket({ title, rows }: { title: string; rows: PlayoffRow[] }) {
   return (
     <div className="bracket-column">
-      <h3>{title}</h3>
+      <div className="bracket-column__header">
+        <h3>{title}</h3>
+        <span>{rows.length} seeds</span>
+      </div>
       {rows.length === 0 ? <p className="empty-state">Bracket will appear here once teams are seeded.</p> : null}
       {rows.map((row) => (
         <article className="bracket-card" key={`${title}-${row.seed}`}>
