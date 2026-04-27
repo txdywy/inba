@@ -63,7 +63,12 @@ export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: 
           <StandingsTable title="Standings — West" rows={snapshot.standings.west} />
         </div>
 
-        <PlayoffPicture east={snapshot.playoffPicture.east} west={snapshot.playoffPicture.west} />
+        <PlayoffPicture
+          east={snapshot.playoffPicture.east}
+          west={snapshot.playoffPicture.west}
+          standings={snapshot.standings}
+          featuredPlayers={snapshot.featuredPlayers}
+        />
 
         <Section
           eyebrow="Focus"

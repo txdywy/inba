@@ -60,6 +60,8 @@ type LineScoreRow = JsonRecord & {
   TeamAbbreviation?: string;
   TEAM_CITY_NAME?: string;
   TeamCityName?: string;
+  TEAM_NAME?: string;
+  TeamName?: string;
   TEAM_NICKNAME?: string;
   TeamNickname?: string;
   PTS?: number | null;
@@ -127,6 +129,73 @@ const DEFAULT_HEADERS: HeadersInit = {
   'Accept-Language': 'en-US,en;q=0.9'
 };
 
+const TEAM_SLUG_TO_ABBREVIATION: Record<string, string> = {
+  atlanta_hawks: 'ATL',
+  hawks: 'ATL',
+  boston_celtics: 'BOS',
+  celtics: 'BOS',
+  brooklyn_nets: 'BKN',
+  nets: 'BKN',
+  charlotte_hornets: 'CHA',
+  hornets: 'CHA',
+  chicago_bulls: 'CHI',
+  bulls: 'CHI',
+  cleveland_cavaliers: 'CLE',
+  cavaliers: 'CLE',
+  dallas_mavericks: 'DAL',
+  mavericks: 'DAL',
+  denver_nuggets: 'DEN',
+  nuggets: 'DEN',
+  detroit_pistons: 'DET',
+  pistons: 'DET',
+  golden_state_warriors: 'GSW',
+  warriors: 'GSW',
+  houston_rockets: 'HOU',
+  rockets: 'HOU',
+  indiana_pacers: 'IND',
+  pacers: 'IND',
+  la_clippers: 'LAC',
+  los_angeles_clippers: 'LAC',
+  clippers: 'LAC',
+  la_lakers: 'LAL',
+  los_angeles_lakers: 'LAL',
+  lakers: 'LAL',
+  memphis_grizzlies: 'MEM',
+  grizzlies: 'MEM',
+  miami_heat: 'MIA',
+  heat: 'MIA',
+  milwaukee_bucks: 'MIL',
+  bucks: 'MIL',
+  minnesota_timberwolves: 'MIN',
+  timberwolves: 'MIN',
+  new_orleans_pelicans: 'NOP',
+  pelicans: 'NOP',
+  new_york_knicks: 'NYK',
+  knicks: 'NYK',
+  oklahoma_city_thunder: 'OKC',
+  thunder: 'OKC',
+  orlando_magic: 'ORL',
+  magic: 'ORL',
+  philadelphia_76ers: 'PHI',
+  sixers: 'PHI',
+  '76ers': 'PHI',
+  phoenix_suns: 'PHX',
+  suns: 'PHX',
+  portland_trail_blazers: 'POR',
+  trail_blazers: 'POR',
+  blazers: 'POR',
+  sacramento_kings: 'SAC',
+  kings: 'SAC',
+  san_antonio_spurs: 'SAS',
+  spurs: 'SAS',
+  toronto_raptors: 'TOR',
+  raptors: 'TOR',
+  utah_jazz: 'UTA',
+  jazz: 'UTA',
+  washington_wizards: 'WAS',
+  wizards: 'WAS'
+};
+
 function getNewYorkDateParts(date: Date = new Date()) {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'America/New_York',
@@ -163,6 +232,7 @@ function derivePhase(date: Date = new Date()): RawSnapshot['phase'] {
   const { month, day } = getNewYorkDateParts(date);
 
   if (month === 4 && day >= 15) return 'playoffs';
+  if (month === 5 || month === 6) return 'playoffs';
   if (month === 4 && day >= 10) return 'playIn';
   return 'regularSeason';
 }
@@ -238,10 +308,14 @@ function parseClock(headerRow: GameRow, status: GameStatus) {
 
 function parseTeamLine(lineScoreRow: LineScoreRow) {
   const city = stringValue(lineScoreRow.TEAM_CITY_NAME ?? lineScoreRow.TeamCityName, 'Unknown');
-  const nickname = stringValue(lineScoreRow.TEAM_NICKNAME ?? lineScoreRow.TeamNickname, 'Team');
+  const teamName = stringValue(
+    lineScoreRow.TEAM_NAME ?? lineScoreRow.TeamName ?? lineScoreRow.TEAM_NICKNAME ?? lineScoreRow.TeamNickname,
+    'Team'
+  );
+  const fullName = teamName.toLowerCase().includes(city.toLowerCase()) ? teamName : `${city} ${teamName}`.trim();
 
   return {
-    name: `${city} ${nickname}`.trim(),
+    name: fullName,
     abbreviation: stringValue(lineScoreRow.TEAM_ABBREVIATION ?? lineScoreRow.TeamAbbreviation, 'UNK'),
     score: lineScoreRow.PTS === undefined || lineScoreRow.PTS === null ? null : numberValue(lineScoreRow.PTS, 0)
   };
@@ -289,6 +363,20 @@ function deriveGames(scoreboardPayload: StatsResponse): GameCard[] {
     });
 }
 
+function mapStandingAbbreviation(row: StandingRow) {
+  const explicit = stringValue(row.TEAM_ABBREVIATION ?? row.TeamAbbreviation, '').toUpperCase();
+  if (explicit) {
+    return explicit;
+  }
+
+  const slug = stringValue(row.TeamSlug, '').toLowerCase().replace(/\s+/g, '_');
+  if (!slug) {
+    return 'UNK';
+  }
+
+  return TEAM_SLUG_TO_ABBREVIATION[slug] ?? TEAM_SLUG_TO_ABBREVIATION[slug.replace(/-/g, '_')] ?? 'UNK';
+}
+
 function deriveStandingsRows(standingsPayload: StatsResponse, conferenceName: 'east' | 'west') {
   const rows = rowsToObjects(findResultSet(standingsPayload, ['Standings', 'LeagueStandings', 'LeagueStandingsV3'])) as StandingRow[];
   const conferenceKey = conferenceName.toLowerCase();
@@ -297,7 +385,7 @@ function deriveStandingsRows(standingsPayload: StatsResponse, conferenceName: 'e
     .filter((row) => stringValue(row.CONFERENCE ?? row.Conference, '').toLowerCase().includes(conferenceKey))
     .map((row, index) => ({
       team: `${stringValue(row.TEAM_CITY ?? row.TeamCity, 'Unknown')} ${stringValue(row.TEAM_NAME ?? row.TeamName, 'Team')}`.trim(),
-      abbreviation: stringValue(row.TEAM_ABBREVIATION ?? row.TeamAbbreviation ?? row.TeamSlug, 'UNK'),
+      abbreviation: mapStandingAbbreviation(row),
       wins: numberValue(row.WINS ?? row.W),
       losses: numberValue(row.LOSSES ?? row.L),
       gamesBehind: numberValue(row.GB ?? row.GamesBehind, 0),

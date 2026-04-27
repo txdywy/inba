@@ -106,6 +106,10 @@ describe('fetchNbaStatsRawSnapshot', () => {
     expect(snapshot.standings.east[0]).toMatchObject({ team: 'Boston Celtics', abbreviation: 'BOS' });
     expect(snapshot.standings.west[0]).toMatchObject({ team: 'Denver Nuggets', abbreviation: 'DEN' });
     expect(snapshot.playoffs.west[0]).toMatchObject({ seed: 1, matchup: 'vs. 8 seed' });
+    expect(snapshot.scoreboard[0]).toMatchObject({
+      away_team: { name: 'Golden State Warriors', abbreviation: 'GSW', score: 108 },
+      home_team: { name: 'Los Angeles Lakers', abbreviation: 'LAL', score: 112 }
+    });
     expect(snapshot.top_story.title).toMatch(/game/i);
   });
 });

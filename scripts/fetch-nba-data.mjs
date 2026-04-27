@@ -19,10 +19,34 @@ async function loadFallbackSnapshot() {
   }
 }
 
+async function loadFeaturedPlayersFallback() {
+  for (const path of [outputPath, fallbackPath]) {
+    try {
+      const snapshot = await readSnapshot(path);
+      if (Array.isArray(snapshot.featuredPlayers) && snapshot.featuredPlayers.length > 0) {
+        return snapshot.featuredPlayers;
+      }
+    } catch {
+      // keep trying the next source
+    }
+  }
+
+  return [];
+}
+
 async function main() {
   try {
     const rawSnapshot = await fetchNbaStatsRawSnapshot();
     const snapshot = normalizeProviderSnapshot(rawSnapshot);
+
+    if (snapshot.featuredPlayers.length === 0) {
+      const featuredPlayers = await loadFeaturedPlayersFallback();
+      if (featuredPlayers.length > 0) {
+        snapshot.featuredPlayers = featuredPlayers;
+        console.warn('NBA player stats unavailable; preserved featured players from the last good snapshot.');
+      }
+    }
+
     await writeLatestSnapshotFile(outputPath, snapshot);
     console.log('Wrote snapshot to public/data/latest.json');
   } catch (error) {
