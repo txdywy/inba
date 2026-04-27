@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-27T04:08:40.668Z",
+  "generatedAt": "2026-04-27T09:47:48.822Z",
   "leaguePhase": "playoffs",
   "headline": {
     "title": "Playoff picture taking shape",
@@ -10,12 +10,12 @@
       "id": "0042500104",
       "status": "scheduled",
       "awayTeam": {
-        "name": "Detroit Pistons",
+        "name": "Detroit Team",
         "abbreviation": "DET",
         "score": null
       },
       "homeTeam": {
-        "name": "Orlando Magic",
+        "name": "Orlando Team",
         "abbreviation": "ORL",
         "score": null
       },
@@ -26,12 +26,12 @@
       "id": "0042500144",
       "status": "scheduled",
       "awayTeam": {
-        "name": "Oklahoma City Thunder",
+        "name": "Oklahoma City Team",
         "abbreviation": "OKC",
         "score": null
       },
       "homeTeam": {
-        "name": "Phoenix Suns",
+        "name": "Phoenix Team",
         "abbreviation": "PHX",
         "score": null
       },
@@ -42,12 +42,12 @@
       "id": "0042500165",
       "status": "scheduled",
       "awayTeam": {
-        "name": "Minnesota Timberwolves",
+        "name": "Minnesota Team",
         "abbreviation": "MIN",
         "score": null
       },
       "homeTeam": {
-        "name": "Denver Nuggets",
+        "name": "Denver Team",
         "abbreviation": "DEN",
         "score": null
       },
@@ -55,85 +55,12 @@
       "clock": "10:30 pm ET"
     }
   ],
-  "featuredPlayers": [
-    {
-      "playerId": 1629029,
-      "name": "Luka Dončić",
-      "teamAbbreviation": "LAL",
-      "points": 33.5,
-      "rebounds": 7.7,
-      "assists": 8.3,
-      "minutes": 35.8
-    },
-    {
-      "playerId": 1628983,
-      "name": "Shai Gilgeous-Alexander",
-      "teamAbbreviation": "OKC",
-      "points": 31.1,
-      "rebounds": 4.3,
-      "assists": 6.6,
-      "minutes": 33.2
-    },
-    {
-      "playerId": 1630162,
-      "name": "Anthony Edwards",
-      "teamAbbreviation": "MIN",
-      "points": 28.8,
-      "rebounds": 5,
-      "assists": 3.7,
-      "minutes": 35
-    },
-    {
-      "playerId": 1627759,
-      "name": "Jaylen Brown",
-      "teamAbbreviation": "BOS",
-      "points": 28.7,
-      "rebounds": 6.9,
-      "assists": 5.1,
-      "minutes": 34.4
-    },
-    {
-      "playerId": 1630178,
-      "name": "Tyrese Maxey",
-      "teamAbbreviation": "PHI",
-      "points": 28.3,
-      "rebounds": 4.1,
-      "assists": 6.6,
-      "minutes": 38
-    },
-    {
-      "playerId": 1628378,
-      "name": "Donovan Mitchell",
-      "teamAbbreviation": "CLE",
-      "points": 27.9,
-      "rebounds": 4.5,
-      "assists": 5.7,
-      "minutes": 33.5
-    },
-    {
-      "playerId": 202695,
-      "name": "Kawhi Leonard",
-      "teamAbbreviation": "LAC",
-      "points": 27.9,
-      "rebounds": 6.4,
-      "assists": 3.6,
-      "minutes": 32.1
-    },
-    {
-      "playerId": 203999,
-      "name": "Nikola Jokić",
-      "teamAbbreviation": "DEN",
-      "points": 27.7,
-      "rebounds": 12.9,
-      "assists": 10.7,
-      "minutes": 34.8
-    }
-  ],
+  "featuredPlayers": [],
   "standings": {
     "east": [
       {
         "team": "Detroit Pistons",
-        "abbreviation": "DET",
+        "abbreviation": "pistons",
         "wins": 60,
         "losses": 22,
         "gamesBehind": 0,
@@ -143,7 +70,7 @@
       },
       {
         "team": "Boston Celtics",
-        "abbreviation": "BOS",
+        "abbreviation": "celtics",
         "wins": 56,
         "losses": 26,
         "gamesBehind": 0,
@@ -153,7 +80,7 @@
       },
       {
         "team": "New York Knicks",
-        "abbreviation": "NYK",
+        "abbreviation": "knicks",
         "wins": 53,
         "losses": 29,
         "gamesBehind": 0,
@@ -163,7 +90,7 @@
       },
       {
         "team": "Cleveland Cavaliers",
-        "abbreviation": "CLE",
+        "abbreviation": "cavaliers",
         "wins": 52,
         "losses": 30,
         "gamesBehind": 0,
@@ -173,7 +100,7 @@
       },
       {
         "team": "Toronto Raptors",
-        "abbreviation": "TOR",
+        "abbreviation": "raptors",
         "wins": 46,
         "losses": 36,
         "gamesBehind": 0,
@@ -183,7 +110,7 @@
       },
       {
         "team": "Atlanta Hawks",
-        "abbreviation": "ATL",
+        "abbreviation": "hawks",
         "wins": 46,
         "losses": 36,
         "gamesBehind": 0,
@@ -193,7 +120,7 @@
       },
       {
         "team": "Philadelphia 76ers",
-        "abbreviation": "PHI",
+        "abbreviation": "sixers",
         "wins": 45,
         "losses": 37,
         "gamesBehind": 0,
@@ -203,7 +130,7 @@
       },
       {
         "team": "Orlando Magic",
-        "abbreviation": "ORL",
+        "abbreviation": "magic",
         "wins": 45,
         "losses": 37,
         "gamesBehind": 0,
@@ -213,7 +140,7 @@
       },
       {
         "team": "Charlotte Hornets",
-        "abbreviation": "CHA",
+        "abbreviation": "hornets",
         "wins": 44,
         "losses": 38,
         "gamesBehind": 0,
@@ -223,19 +150,69 @@
       },
       {
         "team": "Miami Heat",
-        "abbreviation": "MIA",
+        "abbreviation": "heat",
         "wins": 43,
         "losses": 39,
         "gamesBehind": 0,
         "streak": "-",
         "last10": "5-5",
         "rank": 10
+      },
+      {
+        "team": "Milwaukee Bucks",
+        "abbreviation": "bucks",
+        "wins": 32,
+        "losses": 50,
+        "gamesBehind": 0,
+        "streak": "-",
+        "last10": "3-7",
+        "rank": 11
+      },
+      {
+        "team": "Chicago Bulls",
+        "abbreviation": "bulls",
+        "wins": 31,
+        "losses": 51,
+        "gamesBehind": 0,
+        "streak": "-",
+        "last10": "2-8",
+        "rank": 12
+      },
+      {
+        "team": "Brooklyn Nets",
+        "abbreviation": "nets",
+        "wins": 20,
+        "losses": 62,
+        "gamesBehind": 0,
+        "streak": "-",
+        "last10": "3-7",
+        "rank": 13
+      },
+      {
+        "team": "Indiana Pacers",
+        "abbreviation": "pacers",
+        "wins": 19,
+        "losses": 63,
+        "gamesBehind": 0,
+        "streak": "-",
+        "last10": "3-7",
+        "rank": 14
+      },
+      {
+        "team": "Washington Wizards",
+        "abbreviation": "wizards",
+        "wins": 17,
+        "losses": 65,
+        "gamesBehind": 0,
+        "streak": "-",
+        "last10": "0-10",
+        "rank": 15
       }
     ],
     "west": [
       {
         "team": "Oklahoma City Thunder",
-        "abbreviation": "OKC",
+        "abbreviation": "thunder",
         "wins": 64,
         "losses": 18,
         "gamesBehind": 0,
@@ -245,7 +222,7 @@
       },
       {
         "team": "San Antonio Spurs",
-        "abbreviation": "SAS",
+        "abbreviation": "spurs",
         "wins": 62,
         "losses": 20,
         "gamesBehind": 0,
@@ -255,7 +232,7 @@
       },
       {
         "team": "Denver Nuggets",
-        "abbreviation": "DEN",
+        "abbreviation": "nuggets",
         "wins": 54,
         "losses": 28,
         "gamesBehind": 0,
@@ -265,7 +242,7 @@
       },
       {
         "team": "Los Angeles Lakers",
-        "abbreviation": "LAL",
+        "abbreviation": "lakers",
         "wins": 53,
         "losses": 29,
         "gamesBehind": 0,
@@ -275,7 +252,7 @@
       },
       {
         "team": "Houston Rockets",
-        "abbreviation": "HOU",
+        "abbreviation": "rockets",
         "wins": 52,
         "losses": 30,
         "gamesBehind": 0,
@@ -285,7 +262,7 @@
       },
       {
         "team": "Minnesota Timberwolves",
-        "abbreviation": "MIN",
+        "abbreviation": "timberwolves",
         "wins": 49,
         "losses": 33,
         "gamesBehind": 0,
@@ -295,7 +272,7 @@
       },
       {
         "team": "Phoenix Suns",
-        "abbreviation": "PHX",
+        "abbreviation": "suns",
         "wins": 45,
         "losses": 37,
         "gamesBehind": 0,
@@ -305,7 +282,7 @@
       },
       {
         "team": "Portland Trail Blazers",
-        "abbreviation": "POR",
+        "abbreviation": "blazers",
         "wins": 42,
         "losses": 40,
         "gamesBehind": 0,
@@ -315,7 +292,7 @@
       },
       {
         "team": "LA Clippers",
-        "abbreviation": "LAC",
+        "abbreviation": "clippers",
         "wins": 42,
         "losses": 40,
         "gamesBehind": 0,
@@ -325,13 +302,63 @@
       },
       {
         "team": "Golden State Warriors",
-        "abbreviation": "GSW",
+        "abbreviation": "warriors",
         "wins": 37,
         "losses": 45,
         "gamesBehind": 0,
         "streak": "-",
         "last10": "3-7",
         "rank": 10
+      },
+      {
+        "team": "New Orleans Pelicans",
+        "abbreviation": "pelicans",
+        "wins": 26,
+        "losses": 56,
+        "gamesBehind": 0,
+        "streak": "-",
+        "last10": "1-9",
+        "rank": 11
+      },
+      {
+        "team": "Dallas Mavericks",
+        "abbreviation": "mavericks",
+        "wins": 26,
+        "losses": 56,
+        "gamesBehind": 0,
+        "streak": "-",
+        "last10": "3-7",
+        "rank": 12
+      },
+      {
+        "team": "Memphis Grizzlies",
+        "abbreviation": "grizzlies",
+        "wins": 25,
+        "losses": 57,
+        "gamesBehind": 0,
+        "streak": "-",
+        "last10": "1-9",
+        "rank": 13
+      },
+      {
+        "team": "Sacramento Kings",
+        "abbreviation": "kings",
+        "wins": 22,
+        "losses": 60,
+        "gamesBehind": 0,
+        "streak": "-",
+        "last10": "3-7",
+        "rank": 14
+      },
+      {
+        "team": "Utah Jazz",
+        "abbreviation": "jazz",
+        "wins": 22,
+        "losses": 60,
+        "gamesBehind": 0,
+        "streak": "-",
+        "last10": "1-9",
+        "rank": 15
       }
     ]
   },

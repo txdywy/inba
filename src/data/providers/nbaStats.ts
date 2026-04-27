@@ -393,7 +393,7 @@ export async function fetchNbaStatsRawSnapshot({
     Period: '0'
   })
 } = {}): Promise<RawSnapshot> {
-  const playerStatsResponsePromise = fetchImpl(playerStatsUrl, { headers: DEFAULT_HEADERS });
+  const playerStatsResponsePromise = fetchImpl(playerStatsUrl, { headers: DEFAULT_HEADERS }).catch(() => null);
   const [scoreboardResponse, standingsResponse] = await Promise.all([
     fetchImpl(scoreboardUrl, { headers: DEFAULT_HEADERS }),
     fetchImpl(standingsUrl, { headers: DEFAULT_HEADERS })
@@ -414,14 +414,14 @@ export async function fetchNbaStatsRawSnapshot({
 
   let featuredPlayers: ReturnType<typeof parsePlayerStat>[] = [];
 
-  try {
-    const playerStatsResponse = await playerStatsResponsePromise;
-    if (playerStatsResponse.ok) {
+  const playerStatsResponse = await playerStatsResponsePromise;
+  if (playerStatsResponse?.ok) {
+    try {
       const playerStatsPayload = (await playerStatsResponse.json()) as StatsResponse;
       featuredPlayers = deriveFeaturedPlayers(playerStatsPayload);
+    } catch {
+      featuredPlayers = [];
     }
-  } catch {
-    featuredPlayers = [];
   }
 
   const games = deriveGames(scoreboardPayload);
