@@ -1,0 +1,86 @@
+{
+  "generatedAt": "2026-04-27T00:00:00.000Z",
+  "leaguePhase": "regularSeason",
+  "headline": {
+    "title": "Playoff race tightens",
+    "subtitle": "Three teams are separated by one game in the West"
+  },
+  "games": [
+    {
+      "id": "001",
+      "status": "live",
+      "awayTeam": {
+        "name": "Golden State Warriors",
+        "abbreviation": "GSW",
+        "score": 108
+      },
+      "homeTeam": {
+        "name": "Los Angeles Lakers",
+        "abbreviation": "LAL",
+        "score": 112
+      },
+      "periodLabel": "Q4",
+      "clock": "03:41"
+    },
+    {
+      "id": "002",
+      "status": "scheduled",
+      "awayTeam": {
+        "name": "Boston Celtics",
+        "abbreviation": "BOS",
+        "score": null
+      },
+      "homeTeam": {
+        "name": "Miami Heat",
+        "abbreviation": "MIA",
+        "score": null
+      },
+      "periodLabel": "Tonight",
+      "clock": "08:00 PM ET"
+    }
+  ],
+  "standings": {
+    "east": [
+      {
+        "team": "Boston Celtics",
+        "abbreviation": "BOS",
+        "wins": 60,
+        "losses": 22,
+        "gamesBehind": 0,
+        "streak": "W3",
+        "last10": "8-2",
+        "rank": 1
+      }
+    ],
+    "west": [
+      {
+        "team": "Denver Nuggets",
+        "abbreviation": "DEN",
+        "wins": 57,
+        "losses": 25,
+        "gamesBehind": 0,
+        "streak": "W1",
+        "last10": "7-3",
+        "rank": 1
+      }
+    ]
+  },
+  "playoffPicture": {
+    "east": [
+      {
+        "seed": 1,
+        "team": "Boston Celtics",
+        "status": "locked",
+        "matchup": "vs. 8 seed"
+      }
+    ],
+    "west": [
+      {
+        "seed": 1,
+        "team": "Denver Nuggets",
+        "status": "locked",
+        "matchup": "vs. 8 seed"
+      }
+    ]
+  }
+}

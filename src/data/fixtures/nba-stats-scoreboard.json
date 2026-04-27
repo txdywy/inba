@@ -1,0 +1,30 @@
+{
+  "resultSets": [
+    {
+      "name": "GameHeader",
+      "headers": [
+        "GAME_ID",
+        "GAME_STATUS_ID",
+        "GAME_STATUS_TEXT",
+        "HOME_TEAM_ID",
+        "VISITOR_TEAM_ID",
+        "LIVE_PERIOD",
+        "LIVE_PC_TIME"
+      ],
+      "rowSet": [
+        ["001", 2, "In Progress", 1610612747, 1610612744, 4, "03:41"],
+        ["002", 1, "7:30 PM ET", 1610612748, 1610612738, 0, ""]
+      ]
+    },
+    {
+      "name": "LineScore",
+      "headers": ["GAME_ID", "TEAM_ID", "TEAM_ABBREVIATION", "TEAM_CITY_NAME", "TEAM_NICKNAME", "PTS"],
+      "rowSet": [
+        ["001", 1610612744, "GSW", "Golden State", "Warriors", 108],
+        ["001", 1610612747, "LAL", "Los Angeles", "Lakers", 112],
+        ["002", 1610612738, "BOS", "Boston", "Celtics", null],
+        ["002", 1610612748, "MIA", "Miami", "Heat", null]
+      ]
+    }
+  ]
+}
