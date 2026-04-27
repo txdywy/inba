@@ -1,74 +1,58 @@
 {
-  "generatedAt": "2026-04-27T03:57:23.221Z",
+  "generatedAt": "2026-04-27T04:08:40.668Z",
   "leaguePhase": "playoffs",
   "headline": {
     "title": "Playoff picture taking shape",
-    "subtitle": "4 matchups remain on today’s slate"
+    "subtitle": "3 matchups remain on today’s slate"
   },
   "games": [
     {
-      "id": "0042500134",
+      "id": "0042500104",
       "status": "scheduled",
       "awayTeam": {
-        "name": "Cleveland Team",
-        "abbreviation": "CLE",
+        "name": "Detroit Team",
+        "abbreviation": "DET",
         "score": null
       },
       "homeTeam": {
-        "name": "Toronto Team",
-        "abbreviation": "TOR",
+        "name": "Orlando Team",
+        "abbreviation": "ORL",
         "score": null
       },
       "periodLabel": "Tonight",
-      "clock": "1:00 pm ET"
+      "clock": "8:00 pm ET"
     },
     {
-      "id": "0042500154",
+      "id": "0042500144",
       "status": "scheduled",
       "awayTeam": {
-        "name": "San Antonio Team",
-        "abbreviation": "SAS",
+        "name": "Oklahoma City Team",
+        "abbreviation": "OKC",
         "score": null
       },
       "homeTeam": {
-        "name": "Portland Team",
-        "abbreviation": "POR",
-        "score": null
-      },
-      "periodLabel": "Tonight",
-      "clock": "3:30 pm ET"
-    },
-    {
-      "id": "0042500114",
-      "status": "scheduled",
-      "awayTeam": {
-        "name": "Boston Team",
-        "abbreviation": "BOS",
-        "score": null
-      },
-      "homeTeam": {
-        "name": "Philadelphia Team",
-        "abbreviation": "PHI",
-        "score": null
-      },
-      "periodLabel": "Tonight",
-      "clock": "7:00 pm ET"
-    },
-    {
-      "id": "0042500174",
-      "status": "scheduled",
-      "awayTeam": {
-        "name": "Los Angeles Team",
-        "abbreviation": "LAL",
-        "score": null
-      },
-      "homeTeam": {
-        "name": "Houston Team",
-        "abbreviation": "HOU",
+        "name": "Phoenix Team",
+        "abbreviation": "PHX",
         "score": null
       },
       "periodLabel": "Tonight",
       "clock": "9:30 pm ET"
+    },
+    {
+      "id": "0042500165",
+      "status": "scheduled",
+      "awayTeam": {
+        "name": "Minnesota Team",
+        "abbreviation": "MIN",
+        "score": null
+      },
+      "homeTeam": {
+        "name": "Denver Team",
+        "abbreviation": "DEN",
+        "score": null
+      },
+      "periodLabel": "Tonight",
+      "clock": "10:30 pm ET"
     }
   ],
   "standings": {
