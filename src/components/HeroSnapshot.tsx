@@ -1,4 +1,5 @@
 import type { FeaturedPlayer, LeaguePhase, Snapshot } from '../data/types';
+import { hideBrokenImage } from '../lib/imageFallback';
 import { createPlayerHeadshotUrl, createTeamInitials, createTeamLogoUrl } from '../lib/teamArtwork';
 
 interface HeroSnapshotProps {
@@ -127,7 +128,7 @@ export default function HeroSnapshot({
           </div>
 
           <div className="hero-visual__art hero-visual__art--left" aria-hidden="true">
-            {featuredGame ? <img className="hero-visual__logo" src={leftLogo} alt="" aria-hidden="true" loading="lazy" /> : null}
+            {featuredGame ? <img className="hero-visual__logo" src={leftLogo} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} /> : null}
             <span className="hero-visual__label">{leftInitials}</span>
           </div>
           <div className="hero-visual__center" aria-hidden="true">
@@ -136,7 +137,7 @@ export default function HeroSnapshot({
             <span className="hero-visual__center-text">VS</span>
           </div>
           <div className="hero-visual__art hero-visual__art--right" aria-hidden="true">
-            {featuredGame ? <img className="hero-visual__logo" src={rightLogo} alt="" aria-hidden="true" loading="lazy" /> : null}
+            {featuredGame ? <img className="hero-visual__logo" src={rightLogo} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} /> : null}
             <span className="hero-visual__label">{rightInitials}</span>
           </div>
 
@@ -154,7 +155,7 @@ export default function HeroSnapshot({
 
           {leadPlayer ? (
             <div className="hero-spotlight">
-              <img className="hero-spotlight__photo" src={createPlayerHeadshotUrl(leadPlayer.playerId)} alt="" aria-hidden="true" loading="lazy" />
+              <img className="hero-spotlight__photo" src={createPlayerHeadshotUrl(leadPlayer.playerId)} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
               <div className="hero-spotlight__body">
                 <span className="hero-spotlight__eyebrow">Featured scorer</span>
                 <strong>{leadPlayer.name}</strong>

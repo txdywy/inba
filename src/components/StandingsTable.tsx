@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { StandingRow } from '../data/types';
+import { hideBrokenImage } from '../lib/imageFallback';
 import { createTeamLogoUrl } from '../lib/teamArtwork';
 import Section from './Section';
 
@@ -52,7 +53,7 @@ export default function StandingsTable({ eastRows, westRows }: StandingsTablePro
       <div className="table-wrap" role="tabpanel" aria-label={`${conference.label} standings`}>
         {leader ? (
           <div className="table-lead">
-            <img className="table-lead__art" src={leaderArtwork} alt="" aria-hidden="true" loading="lazy" />
+            <img className="table-lead__art" src={leaderArtwork} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
             <div>
               <span>{conference.label} leader</span>
               <strong>
@@ -79,7 +80,7 @@ export default function StandingsTable({ eastRows, westRows }: StandingsTablePro
                 <td>{row.rank}</td>
                 <td>
                   <span className="table-team-mark">
-                    <img src={createTeamLogoUrl(row.abbreviation)} alt="" aria-hidden="true" loading="lazy" />
+                    <img src={createTeamLogoUrl(row.abbreviation)} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
                   </span>
                   <strong>{row.team}</strong>
                   <span>{row.abbreviation}</span>
