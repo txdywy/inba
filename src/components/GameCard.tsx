@@ -1,5 +1,5 @@
 import type { GameCard as GameCardData } from '../data/types';
-import { createTeamArtwork, createTeamInitials } from '../lib/teamArtwork';
+import { createMatchupArtwork, createTeamInitials } from '../lib/teamArtwork';
 
 interface GameCardProps {
   game: GameCardData;
@@ -7,7 +7,12 @@ interface GameCardProps {
 }
 
 export default function GameCard({ game, index }: GameCardProps) {
-  const artwork = createTeamArtwork(game.homeTeam.name, game.homeTeam.abbreviation);
+  const artwork = createMatchupArtwork(
+    game.awayTeam.name,
+    game.awayTeam.abbreviation,
+    game.homeTeam.name,
+    game.homeTeam.abbreviation,
+  );
   const awayInitials = createTeamInitials(game.awayTeam.name);
   const homeInitials = createTeamInitials(game.homeTeam.name);
 

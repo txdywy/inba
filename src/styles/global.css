@@ -30,10 +30,10 @@ body,
 body {
   min-height: 100vh;
   background:
-    linear-gradient(180deg, rgba(5, 6, 11, 0.28), rgba(5, 6, 11, 0.78)),
-    radial-gradient(circle at 20% 12%, rgba(255, 125, 95, 0.18), transparent 0 20%),
-    radial-gradient(circle at 78% 0%, rgba(94, 234, 212, 0.14), transparent 0 18%),
-    linear-gradient(135deg, #06070e 0%, #0c1020 55%, #090b14 100%);
+    radial-gradient(circle at 16% 10%, rgba(243, 192, 93, 0.2), transparent 0 18%),
+    radial-gradient(circle at 84% 12%, rgba(126, 240, 220, 0.14), transparent 0 16%),
+    linear-gradient(180deg, rgba(5, 6, 11, 0.24), rgba(5, 6, 11, 0.82)),
+    linear-gradient(135deg, #05060b 0%, #0b1020 48%, #070a12 100%);
   position: relative;
   overflow-x: hidden;
 }
@@ -336,7 +336,7 @@ h1 {
 }
 
 .feature-card {
-  border-radius: 24px;
+  border-radius: 26px;
   padding: 18px;
   position: relative;
   overflow: hidden;
@@ -492,8 +492,11 @@ h1 {
 }
 
 .section-card {
-  border-radius: 24px;
+  border-radius: 28px;
   padding: 20px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent 32%),
+    linear-gradient(180deg, rgba(14, 17, 32, 0.88), rgba(8, 10, 18, 0.82));
 }
 
 .section-heading h2 {
@@ -513,12 +516,15 @@ h1 {
 }
 
 .game-card {
-  border-radius: 22px;
+  border-radius: 24px;
   padding: 16px;
   position: relative;
   overflow: hidden;
   display: grid;
   gap: 12px;
+  background:
+    radial-gradient(circle at top right, rgba(243, 192, 93, 0.1), transparent 34%),
+    linear-gradient(180deg, rgba(11, 13, 23, 0.92), rgba(7, 9, 16, 0.88));
 }
 
 .game-card::before {
@@ -672,12 +678,14 @@ h1 {
   color: #fff4d2;
   font-size: 0.66rem;
   letter-spacing: 0.14em;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .table-wrap {
   overflow-x: auto;
   border-radius: 18px;
   padding: 4px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
 }
 
 .table-lead {
@@ -748,6 +756,7 @@ th {
   gap: 8px;
   border-radius: 20px;
   padding: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
 }
 
 .bracket-seed {

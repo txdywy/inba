@@ -1,4 +1,5 @@
 import type { PlayoffRow } from '../data/types';
+import { createConferenceArtwork } from '../lib/teamArtwork';
 import Section from './Section';
 
 interface PlayoffPictureProps {
@@ -10,20 +11,25 @@ function ConferenceBracket({ title, rows }: { title: string; rows: PlayoffRow[] 
   return (
     <div className="bracket-column">
       <div className="bracket-column__header">
-        <h3>{title}</h3>
+        <div>
+          <span>{title} conference</span>
+          <h3>{title}</h3>
+        </div>
         <span>{rows.length} seeds</span>
       </div>
       {rows.length === 0 ? <p className="empty-state">Bracket will appear here once teams are seeded.</p> : null}
-      {rows.map((row) => (
-        <article className="bracket-card" key={`${title}-${row.seed}`}>
-          <div>
-            <span className="bracket-seed">#{row.seed}</span>
-            <strong>{row.team}</strong>
-          </div>
-          <p>{row.status}</p>
-          {row.matchup ? <span>{row.matchup}</span> : null}
-        </article>
-      ))}
+      <div className="bracket-stack">
+        {rows.map((row) => (
+          <article className={`bracket-card bracket-card--${row.status}`} key={`${title}-${row.seed}`}>
+            <div className="bracket-card__top">
+              <span className="bracket-seed">#{row.seed}</span>
+              <strong>{row.team}</strong>
+            </div>
+            <p>{row.status}</p>
+            {row.matchup ? <span>{row.matchup}</span> : null}
+          </article>
+        ))}
+      </div>
     </div>
   );
 }
