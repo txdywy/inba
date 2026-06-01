@@ -86,7 +86,10 @@ const playerStatsFixture = {
 
 describe('fetchNbaStatsRawSnapshot', () => {
   it('combines scoreboard, standings, and player payloads into the raw snapshot contract', async () => {
+    const now = new Date('2026-04-27T11:08:15.112Z');
+    const requestedUrls: string[] = [];
     const fetchImpl: typeof fetch = async (input) => {
+      requestedUrls.push(String(input));
       const payload = String(input).includes('scoreboardv2')
         ? scoreboardFixture
         : String(input).includes('leaguedashplayerstats')
@@ -98,8 +101,14 @@ describe('fetchNbaStatsRawSnapshot', () => {
       } as Response;
     };
 
-    const snapshot = await fetchNbaStatsRawSnapshot({ fetchImpl });
+    const snapshot = await fetchNbaStatsRawSnapshot({ fetchImpl, now });
+    const scoreboardUrl = new URL(requestedUrls.find((url) => url.includes('scoreboardv2')) ?? '');
+    const standingsUrl = new URL(requestedUrls.find((url) => url.includes('leaguestandingsv3')) ?? '');
 
+    expect(snapshot.generated_at).toBe(now.toISOString());
+    expect(snapshot.phase).toBe('playoffs');
+    expect(scoreboardUrl.searchParams.get('GameDate')).toBe('4/27/2026');
+    expect(standingsUrl.searchParams.get('Season')).toBe('2025-26');
     expect(snapshot.scoreboard).toHaveLength(2);
     expect(snapshot.featured_players).toHaveLength(8);
     expect(snapshot.featured_players[0]).toMatchObject({ playerId: 1629029, name: 'Luka Dončić', teamAbbreviation: 'LAL' });

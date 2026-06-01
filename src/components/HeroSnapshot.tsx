@@ -1,51 +1,20 @@
-import type { FeaturedPlayer, LeaguePhase, Snapshot } from '../data/types';
+import type { SnapshotSummary } from '../data/snapshotSummary';
+import type { Snapshot } from '../data/types';
 import { hideBrokenImage } from '../lib/imageFallback';
 import { createPlayerHeadshotUrl, createTeamInitials, createTeamLogoUrl } from '../lib/teamArtwork';
 
 interface HeroSnapshotProps {
   snapshot: Snapshot;
-  liveCount: number;
-  scheduledCount: number;
-  finalCount: number;
+  summary: SnapshotSummary;
   isRefreshing: boolean;
-  featuredPlayers: FeaturedPlayer[];
 }
 
-const phaseLabels: Record<LeaguePhase, string> = {
-  regularSeason: 'Regular season desk',
-  playIn: 'Play-in command center',
-  playoffs: 'Playoff command center'
-};
-
-function formatGameState(snapshot: Snapshot, game: Snapshot['games'][number] | undefined) {
-  if (!game) {
-    return `Tracking the ${phaseLabels[snapshot.leaguePhase].toLowerCase()}.`;
-  }
-
-  if (game.status === 'scheduled') {
-    return `${game.periodLabel} · ${game.awayTeam.name} at ${game.homeTeam.name}`;
-  }
-
-  return `${game.periodLabel} · ${game.clock} · ${game.awayTeam.name} at ${game.homeTeam.name}`;
-}
-
-export default function HeroSnapshot({
-  snapshot,
-  liveCount,
-  scheduledCount,
-  finalCount,
-  isRefreshing,
-  featuredPlayers
-}: HeroSnapshotProps) {
-  const featuredGame = snapshot.games[0];
-  const leadPlayer = featuredPlayers[0];
-  const eastLeader = snapshot.standings.east[0];
-  const westLeader = snapshot.standings.west[0];
+export default function HeroSnapshot({ snapshot, summary, isRefreshing }: HeroSnapshotProps) {
+  const { featuredGame, leadPlayer, eastLeader, westLeader } = summary;
   const leftLogo = featuredGame ? createTeamLogoUrl(featuredGame.awayTeam.abbreviation) : '';
   const rightLogo = featuredGame ? createTeamLogoUrl(featuredGame.homeTeam.abbreviation) : '';
   const leftInitials = featuredGame ? createTeamInitials(featuredGame.awayTeam.name) : 'NBA';
   const rightInitials = featuredGame ? createTeamInitials(featuredGame.homeTeam.name) : 'LIVE';
-  const phaseLabel = phaseLabels[snapshot.leaguePhase];
 
   return (
     <header className="hero-panel">
@@ -57,10 +26,10 @@ export default function HeroSnapshot({
               <span className="hero-kicker">Broadcast editorial briefing</span>
             </div>
             <div className="hero-meta__badges">
-              <span className="hero-phase-pill">{phaseLabel}</span>
+              <span className="hero-phase-pill">{summary.heroPhaseLabel}</span>
               <span className={`hero-timestamp hero-timestamp--${isRefreshing ? 'refreshing' : 'ready'}`}>
                 <span className="hero-timestamp__dot" aria-hidden="true" />
-                {isRefreshing ? 'Refreshing live snapshot…' : `Updated ${new Date(snapshot.generatedAt).toLocaleString()}`}
+                {isRefreshing ? 'Refreshing live snapshot…' : summary.updatedLabel}
               </span>
             </div>
           </div>
@@ -73,15 +42,15 @@ export default function HeroSnapshot({
 
             <div className="hero-scoreline" aria-label="Current NBA summary">
               <span>
-                <strong>{liveCount}</strong>
+                <strong>{summary.liveCount}</strong>
                 live now
               </span>
               <span>
-                <strong>{scheduledCount}</strong>
+                <strong>{summary.scheduledCount}</strong>
                 next windows
               </span>
               <span>
-                <strong>{finalCount}</strong>
+                <strong>{summary.finalCount}</strong>
                 already final
               </span>
               <span>
@@ -95,7 +64,7 @@ export default function HeroSnapshot({
             <article className="hero-brief-card">
               <span className="hero-brief-card__eyebrow">Lead matchup</span>
               <strong>{featuredGame ? `${featuredGame.awayTeam.abbreviation} at ${featuredGame.homeTeam.abbreviation}` : 'Spotlight to come'}</strong>
-              <span>{formatGameState(snapshot, featuredGame)}</span>
+              <span>{summary.featuredGameState}</span>
             </article>
             <article className="hero-brief-card">
               <span className="hero-brief-card__eyebrow">Pressure line</span>
@@ -124,7 +93,7 @@ export default function HeroSnapshot({
           <div className="hero-marquee">
             <span className="hero-marquee__eyebrow">Spotlight window</span>
             <strong>{featuredGame ? `${featuredGame.awayTeam.name} at ${featuredGame.homeTeam.name}` : 'League night in focus'}</strong>
-            <span>{formatGameState(snapshot, featuredGame)}</span>
+            <span>{summary.featuredGameState}</span>
           </div>
 
           <div className="hero-visual__art hero-visual__art--left" aria-hidden="true">

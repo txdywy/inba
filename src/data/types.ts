@@ -1,5 +1,11 @@
 export type LeaguePhase = 'regularSeason' | 'playIn' | 'playoffs';
 
+export const phaseLabels: Record<LeaguePhase, string> = {
+  regularSeason: 'Regular season',
+  playIn: 'Play-in race',
+  playoffs: 'Playoffs'
+};
+
 export interface Snapshot {
   generatedAt: string;
   leaguePhase: LeaguePhase;
@@ -58,6 +64,6 @@ export interface StandingRow {
 export interface PlayoffRow {
   seed: number;
   team: string;
-  status: string;
+  status: 'locked' | 'play-in';
   matchup?: string;
 }

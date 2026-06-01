@@ -56,10 +56,10 @@ function mapGame(value: unknown): GameCard {
   return {
     id: asString(game.id ?? game.game_id, 'unknown-game'),
     status: mapStatus(game.status),
-    awayTeam: mapTeam(game.away_team ?? game.away),
-    homeTeam: mapTeam(game.home_team ?? game.home),
-    periodLabel: asString(game.period_label ?? game.period ?? game.quarter, 'TBD'),
-    clock: asString(game.clock ?? game.game_clock, '--:--')
+    awayTeam: mapTeam(game.away_team ?? game.awayTeam ?? game.away),
+    homeTeam: mapTeam(game.home_team ?? game.homeTeam ?? game.home),
+    periodLabel: asString(game.period_label ?? game.periodLabel ?? game.period ?? game.quarter, 'TBD'),
+    clock: asString(game.clock ?? game.game_clock ?? game.gameClock, '--:--')
   };
 }
 
@@ -71,7 +71,7 @@ function mapStandingRow(value: unknown, fallbackRank: number): StandingRow {
     abbreviation: asString(row.abbreviation ?? row.abbr ?? row.code, 'UNK'),
     wins: asNumber(row.wins),
     losses: asNumber(row.losses),
-    gamesBehind: asNumber(row.games_behind ?? row.gb),
+    gamesBehind: asNumber(row.games_behind ?? row.gamesBehind ?? row.gb),
     streak: asString(row.streak, '-'),
     last10: asString(row.last10 ?? row.last_10, '-'),
     rank: asNumber(row.rank, fallbackRank)
@@ -80,11 +80,12 @@ function mapStandingRow(value: unknown, fallbackRank: number): StandingRow {
 
 function mapPlayoffRow(value: unknown): PlayoffRow {
   const row = assertObject(value);
+  const rawStatus = asString(row.status, 'locked');
 
   return {
     seed: asNumber(row.seed),
     team: asString(row.team ?? row.team_name, 'Unknown Team'),
-    status: asString(row.status, 'unknown'),
+    status: rawStatus === 'play-in' ? 'play-in' : 'locked',
     matchup: typeof row.matchup === 'string' ? row.matchup : undefined
   };
 }
@@ -119,7 +120,7 @@ export function normalizeProviderSnapshot(raw: unknown): Snapshot {
   const generatedAt = asString(payload.generated_at ?? payload.generatedAt, new Date().toISOString());
   const scoreboard = ensureArray(payload.games ?? payload.scoreboard, 'games');
   const standings = assertObject(payload.standings ?? {});
-  const playoffs = assertObject(payload.playoff_picture ?? payload.playoffs ?? {});
+  const playoffs = assertObject(payload.playoff_picture ?? payload.playoffPicture ?? payload.playoffs ?? {});
   const headline = assertObject(payload.headline ?? payload.top_story ?? {});
   const featuredPlayerSource = payload.featured_players ?? payload.featuredPlayers;
 

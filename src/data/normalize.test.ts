@@ -8,6 +8,10 @@ describe('normalizeProviderSnapshot', () => {
     expect(normalizeProviderSnapshot(raw)).toEqual(expected);
   });
 
+  it('accepts an already-normalized published snapshot', () => {
+    expect(normalizeProviderSnapshot(expected)).toEqual(expected);
+  });
+
   it('throws a clear error when core sections are missing', () => {
     expect(() => normalizeProviderSnapshot({} as never)).toThrow(/games/i);
   });

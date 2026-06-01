@@ -33,7 +33,9 @@ export default function StandingsTable({ eastRows, westRows }: StandingsTablePro
         <button
           type="button"
           role="tab"
+          id="tab-east"
           aria-selected={activeConference === 'east'}
+          aria-controls="panel-east"
           className={`standings-switcher__tab standings-switcher__tab--${activeConference === 'east' ? 'active' : 'idle'}`}
           onClick={() => setActiveConference('east')}
         >
@@ -42,7 +44,9 @@ export default function StandingsTable({ eastRows, westRows }: StandingsTablePro
         <button
           type="button"
           role="tab"
+          id="tab-west"
           aria-selected={activeConference === 'west'}
+          aria-controls="panel-west"
           className={`standings-switcher__tab standings-switcher__tab--${activeConference === 'west' ? 'active' : 'idle'}`}
           onClick={() => setActiveConference('west')}
         >
@@ -50,7 +54,12 @@ export default function StandingsTable({ eastRows, westRows }: StandingsTablePro
         </button>
       </div>
 
-      <div className="table-wrap" role="tabpanel" aria-label={`${conference.label} standings`}>
+      <div
+        className="table-wrap"
+        role="tabpanel"
+        id={`panel-${activeConference}`}
+        aria-label={`${conference.label} standings`}
+      >
         {leader ? (
           <div className="table-lead">
             <img className="table-lead__art" src={leaderArtwork} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />

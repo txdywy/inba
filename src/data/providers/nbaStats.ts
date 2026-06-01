@@ -279,6 +279,59 @@ function stringValue(value: unknown, fallback = '') {
   return typeof value === 'string' && value.length > 0 ? value : fallback;
 }
 
+function gameIdKeys(value: unknown) {
+  if (value === null || value === undefined) {
+    return [];
+  }
+
+  const raw = String(value).trim();
+  if (!raw) {
+    return [];
+  }
+
+  const keys = new Set([raw]);
+  const numeric = Number(raw);
+  if (Number.isFinite(numeric)) {
+    keys.add(String(numeric));
+  }
+
+  return [...keys];
+}
+
+function indexLineScores(lineScoreRows: LineScoreRow[]) {
+  const byGame = new Map<string, Map<number, LineScoreRow>>();
+
+  for (const row of lineScoreRows) {
+    const teamId = numberValue(row.TEAM_ID ?? row.TeamID, Number.NaN);
+    if (!Number.isFinite(teamId)) {
+      continue;
+    }
+
+    for (const gameKey of gameIdKeys(row.GAME_ID ?? row.GameID)) {
+      const byTeam = byGame.get(gameKey) ?? new Map<number, LineScoreRow>();
+      byTeam.set(teamId, row);
+      byGame.set(gameKey, byTeam);
+    }
+  }
+
+  return byGame;
+}
+
+function findLineScore(
+  lineScoresByGame: Map<string, Map<number, LineScoreRow>>,
+  gameId: unknown,
+  teamId: number
+) {
+  for (const gameKey of gameIdKeys(gameId)) {
+    const lineScore = lineScoresByGame.get(gameKey)?.get(teamId);
+    if (lineScore) {
+      return lineScore;
+    }
+  }
+
+  return undefined;
+}
+
 function parseGameStatus(headerRow: GameRow): GameStatus {
   const statusId = numberValue(headerRow.GAME_STATUS_ID ?? headerRow.GameStatusID);
   const statusText = stringValue(headerRow.GAME_STATUS_TEXT ?? headerRow.GameStatusText).toLowerCase();
@@ -336,6 +389,7 @@ function parsePlayerStat(playerRow: PlayerStatRow) {
 function deriveGames(scoreboardPayload: StatsResponse): GameCard[] {
   const gameHeader = rowsToObjects(findResultSet(scoreboardPayload, ['GameHeader'])) as JsonRecord[];
   const lineScore = rowsToObjects(findResultSet(scoreboardPayload, ['LineScore'])) as LineScoreRow[];
+  const lineScoresByGame = indexLineScores(lineScore);
 
   return gameHeader
     .map((headerRow) => {
@@ -344,9 +398,8 @@ function deriveGames(scoreboardPayload: StatsResponse): GameCard[] {
       const homeTeamId = numberValue(game.HOME_TEAM_ID ?? game.HomeTeamID);
       const awayTeamId = numberValue(game.VISITOR_TEAM_ID ?? game.VisitorTeamID);
       const status = parseGameStatus(game);
-      const lines = lineScore.filter((row) => numberValue(row.GAME_ID ?? row.GameID) === numberValue(game.GAME_ID ?? game.GameID));
-      const homeLine = lines.find((row) => numberValue(row.TEAM_ID ?? row.TeamID) === homeTeamId);
-      const awayLine = lines.find((row) => numberValue(row.TEAM_ID ?? row.TeamID) === awayTeamId);
+      const homeLine = findLineScore(lineScoresByGame, game.GAME_ID ?? game.GameID, homeTeamId);
+      const awayLine = findLineScore(lineScoresByGame, game.GAME_ID ?? game.GameID, awayTeamId);
 
       return {
         id: gameId,
@@ -459,19 +512,20 @@ function deriveHeadline(games: GameCard[], phase: RawSnapshot['phase']) {
 
 export async function fetchNbaStatsRawSnapshot({
   fetchImpl = fetch,
+  now = new Date(),
   scoreboardUrl = createStatsUrl('scoreboardv2', {
-    GameDate: formatGameDate(),
+    GameDate: formatGameDate(now),
     LeagueID: '00',
     DayOffset: '0'
   }),
   standingsUrl = createStatsUrl('leaguestandingsv3', {
     LeagueID: '00',
-    Season: deriveSeason(),
+    Season: deriveSeason(now),
     SeasonType: 'Regular Season'
   }),
   playerStatsUrl = createStatsUrl('leaguedashplayerstats', {
     LeagueID: '00',
-    Season: deriveSeason(),
+    Season: deriveSeason(now),
     SeasonType: 'Regular Season',
     PerMode: 'PerGame',
     MeasureType: 'Base',
@@ -515,10 +569,10 @@ export async function fetchNbaStatsRawSnapshot({
   const games = deriveGames(scoreboardPayload);
   const east = deriveStandingsRows(standingsPayload, 'east');
   const west = deriveStandingsRows(standingsPayload, 'west');
-  const phase = derivePhase();
+  const phase = derivePhase(now);
 
   return {
-    generated_at: new Date().toISOString(),
+    generated_at: now.toISOString(),
     phase,
     top_story: deriveHeadline(games, phase),
     scoreboard: games,
