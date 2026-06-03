@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import FeaturedPlayersRail from './components/FeaturedPlayersRail';
 import GamesRail from './components/GamesRail';
 import HeroSnapshot from './components/HeroSnapshot';
@@ -14,7 +15,7 @@ interface AppProps {
 
 export default function App({ initialSnapshot = fallbackSnapshot as Snapshot }: AppProps) {
   const { snapshot, isRefreshing } = useLiveSnapshot(initialSnapshot);
-  const summary = summarizeSnapshot(snapshot);
+  const summary = useMemo(() => summarizeSnapshot(snapshot), [snapshot]);
 
   return (
     <main className="app-shell">

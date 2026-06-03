@@ -54,8 +54,18 @@ function getPalette(teamKey: string) {
   return TEAM_PALETTES[teamKey] ?? ['#f3c05d', '#0e1324', '#7ef0dc'];
 }
 
+const teamArtworkCache = new Map<string, string>();
+const matchupArtworkCache = new Map<string, string>();
+const conferenceArtworkCache = new Map<string, string>();
+
 export function createTeamArtwork(teamName: string, abbreviation: string) {
   const teamKey = abbreviation.toUpperCase();
+  const cacheKey = `${teamName}|${teamKey}`;
+  const cachedArtwork = teamArtworkCache.get(cacheKey);
+  if (cachedArtwork) {
+    return cachedArtwork;
+  }
+
   const [primary, accent, dark] = getPalette(teamKey);
   const seed = hashTeam(`${teamName}-${teamKey}`);
   const tilt = 10 + (seed % 18);
@@ -111,7 +121,9 @@ export function createTeamArtwork(teamName: string, abbreviation: string) {
     </svg>
   `;
 
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg.trim())}`;
+  const artwork = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg.trim())}`;
+  teamArtworkCache.set(cacheKey, artwork);
+  return artwork;
 }
 
 export function createTeamInitials(teamName: string) {
@@ -178,6 +190,12 @@ export function createMatchupArtwork(
 ) {
   const awayKey = awayAbbreviation.toUpperCase();
   const homeKey = homeAbbreviation.toUpperCase();
+  const cacheKey = `${awayTeamName}|${awayKey}|${homeTeamName}|${homeKey}`;
+  const cachedArtwork = matchupArtworkCache.get(cacheKey);
+  if (cachedArtwork) {
+    return cachedArtwork;
+  }
+
   const [awayPrimary, awayAccent, awayDark] = getPalette(awayKey);
   const [homePrimary, homeAccent, homeDark] = getPalette(homeKey);
   const seed = hashTeam(`${awayTeamName}-${awayKey}-${homeTeamName}-${homeKey}`);
@@ -256,10 +274,17 @@ export function createMatchupArtwork(
     </svg>
   `;
 
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg.trim())}`;
+  const artwork = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg.trim())}`;
+  matchupArtworkCache.set(cacheKey, artwork);
+  return artwork;
 }
 
 export function createConferenceArtwork(label: string) {
+  const cachedArtwork = conferenceArtworkCache.get(label);
+  if (cachedArtwork) {
+    return cachedArtwork;
+  }
+
   const seed = hashTeam(label);
   const warm = 40 + (seed % 30);
   const halo = 56 + (seed % 18);
@@ -308,5 +333,7 @@ export function createConferenceArtwork(label: string) {
     </svg>
   `;
 
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg.trim())}`;
+  const artwork = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg.trim())}`;
+  conferenceArtworkCache.set(label, artwork);
+  return artwork;
 }

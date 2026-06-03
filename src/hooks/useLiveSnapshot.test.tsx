@@ -6,13 +6,13 @@ import type { Snapshot } from '../data/types';
 import { useLiveSnapshot } from './useLiveSnapshot';
 
 function HookHarness({ fetchImpl }: { fetchImpl: typeof fetch }) {
-  const { snapshot, isRefreshing } = useLiveSnapshot(fallbackSnapshot as Snapshot, {
+  const { snapshot, isRefreshing, error } = useLiveSnapshot(fallbackSnapshot as Snapshot, {
     fetchImpl,
     sourceUrl: '/data/latest.json'
   });
 
   return (
-    <output data-testid="snapshot" data-refreshing={String(isRefreshing)}>
+    <output data-testid="snapshot" data-refreshing={String(isRefreshing)} data-error={error?.message ?? ''}>
       {snapshot.headline.title}
     </output>
   );
@@ -44,5 +44,19 @@ describe('useLiveSnapshot', () => {
     unmount();
 
     expect(signal?.aborted).toBe(true);
+  });
+
+  it('keeps the initial snapshot visible and exposes refresh failures', async () => {
+    const fetchImpl = vi.fn(async () => ({
+      ok: false,
+      status: 503,
+      json: async () => ({})
+    })) as unknown as typeof fetch;
+
+    render(<HookHarness fetchImpl={fetchImpl} />);
+
+    await waitFor(() => expect(screen.getByTestId('snapshot')).toHaveAttribute('data-refreshing', 'false'));
+    expect(screen.getByTestId('snapshot')).toHaveTextContent('Playoff picture taking shape');
+    expect(screen.getByTestId('snapshot')).toHaveAttribute('data-error', 'Failed to load snapshot: 503');
   });
 });

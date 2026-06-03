@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import type { FeaturedPlayer, PlayoffRow, StandingRow } from '../data/types';
 import { hideBrokenImage } from '../lib/imageFallback';
 import { createConferenceArtwork, createPlayerHeadshotUrl, createTeamLogoUrl } from '../lib/teamArtwork';
@@ -23,9 +24,36 @@ function calculateFormScore(last10: string) {
 }
 
 function pickConferencePlayer(players: FeaturedPlayer[], conferenceTeams: Set<string>) {
-  return [...players]
-    .filter((player) => conferenceTeams.has(player.teamAbbreviation.toUpperCase()))
-    .sort((left, right) => right.points - left.points || right.minutes - left.minutes)[0];
+  return players.reduce<FeaturedPlayer | undefined>((bestPlayer, player) => {
+    if (!conferenceTeams.has(player.teamAbbreviation.toUpperCase())) {
+      return bestPlayer;
+    }
+
+    if (!bestPlayer || player.points > bestPlayer.points || (player.points === bestPlayer.points && player.minutes > bestPlayer.minutes)) {
+      return player;
+    }
+
+    return bestPlayer;
+  }, undefined);
+}
+
+function pickBestForm(rows: StandingRow[]) {
+  return rows.reduce<StandingRow | undefined>((bestRow, row) => {
+    if (!bestRow) {
+      return row;
+    }
+
+    const formDelta = calculateFormScore(row.last10) - calculateFormScore(bestRow.last10);
+    if (formDelta > 0) {
+      return row;
+    }
+
+    if (formDelta === 0 && (row.wins > bestRow.wins || (row.wins === bestRow.wins && row.rank < bestRow.rank))) {
+      return row;
+    }
+
+    return bestRow;
+  }, undefined);
 }
 
 function ConferenceTree({
@@ -39,16 +67,14 @@ function ConferenceTree({
   standingsRows: StandingRow[];
   featuredPlayers: FeaturedPlayer[];
 }) {
-  const artwork = createConferenceArtwork(title);
-  const standingsByTeam = new Map(standingsRows.map((row) => [row.team, row] as const));
-  const conferenceTeams = new Set(standingsRows.map((row) => row.abbreviation.toUpperCase()));
+  const artwork = useMemo(() => createConferenceArtwork(title), [title]);
+  const standingsByTeam = useMemo(() => new Map(standingsRows.map((row) => [row.team, row] as const)), [standingsRows]);
+  const conferenceTeams = useMemo(() => new Set(standingsRows.map((row) => row.abbreviation.toUpperCase())), [standingsRows]);
   const topSeed = rows[0];
   const lockedCount = rows.filter((row) => row.status === 'locked').length;
   const playInCount = rows.filter((row) => row.status === 'play-in').length;
-  const bestForm = [...standingsRows].sort(
-    (left, right) => calculateFormScore(right.last10) - calculateFormScore(left.last10) || right.wins - left.wins || left.rank - right.rank
-  )[0];
-  const star = pickConferencePlayer(featuredPlayers, conferenceTeams);
+  const bestForm = useMemo(() => pickBestForm(standingsRows), [standingsRows]);
+  const star = useMemo(() => pickConferencePlayer(featuredPlayers, conferenceTeams), [conferenceTeams, featuredPlayers]);
   const topSeedStanding = topSeed ? standingsByTeam.get(topSeed.team) : undefined;
   const bestFormStanding = bestForm;
 

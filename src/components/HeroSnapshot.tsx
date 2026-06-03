@@ -54,7 +54,7 @@ export default function HeroSnapshot({ snapshot, summary, isRefreshing }: HeroSn
                 already final
               </span>
               <span>
-                <strong>{snapshot.leaguePhase}</strong>
+                <strong>{summary.phaseLabel}</strong>
                 editorial frame
               </span>
             </div>

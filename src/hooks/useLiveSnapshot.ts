@@ -24,12 +24,14 @@ export function useLiveSnapshot(
 ) {
   const [snapshot, setSnapshot] = useState(initialSnapshot);
   const [isRefreshing, setIsRefreshing] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();
 
     setIsRefreshing(true);
+    setError(null);
 
     fetchImpl(sourceUrl, { signal: controller.signal })
       .then((response) => {
@@ -43,6 +45,7 @@ export function useLiveSnapshot(
       .then((nextSnapshot) => {
         if (!cancelled) {
           setSnapshot(nextSnapshot);
+          setError(null);
         }
       })
       .catch((error) => {
@@ -50,6 +53,9 @@ export function useLiveSnapshot(
           return;
         }
 
+        if (!cancelled) {
+          setError(error instanceof Error ? error : new Error(String(error)));
+        }
         // Keep the static snapshot visible when the refresh request fails.
       })
       .finally(() => {
@@ -64,5 +70,5 @@ export function useLiveSnapshot(
     };
   }, [fetchImpl, normalize, sourceUrl]);
 
-  return { snapshot, isRefreshing };
+  return { snapshot, isRefreshing, error };
 }

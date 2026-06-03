@@ -71,38 +71,42 @@ export default function StandingsTable({ eastRows, westRows }: StandingsTablePro
             </div>
           </div>
         ) : null}
-        <table>
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Team</th>
-              <th>W</th>
-              <th>L</th>
-              <th>GB</th>
-              <th>Streak</th>
-              <th>Last 10</th>
-            </tr>
-          </thead>
-          <tbody>
-            {conference.rows.map((row) => (
-              <tr key={`${conference.key}-${row.abbreviation}`}>
-                <td>{row.rank}</td>
-                <td>
-                  <span className="table-team-mark">
-                    <img src={createTeamLogoUrl(row.abbreviation)} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
-                  </span>
-                  <strong>{row.team}</strong>
-                  <span>{row.abbreviation}</span>
-                </td>
-                <td>{row.wins}</td>
-                <td>{row.losses}</td>
-                <td>{row.gamesBehind}</td>
-                <td>{row.streak}</td>
-                <td>{row.last10}</td>
+        {conference.rows.length === 0 ? (
+          <p className="empty-state">Standings will appear here once the conference table is available.</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Team</th>
+                <th>W</th>
+                <th>L</th>
+                <th>GB</th>
+                <th>Streak</th>
+                <th>Last 10</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {conference.rows.map((row) => (
+                <tr key={`${conference.key}-${row.abbreviation}`}>
+                  <td>{row.rank}</td>
+                  <td>
+                    <span className="table-team-mark">
+                      <img src={createTeamLogoUrl(row.abbreviation)} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
+                    </span>
+                    <strong>{row.team}</strong>
+                    <span>{row.abbreviation}</span>
+                  </td>
+                  <td>{row.wins}</td>
+                  <td>{row.losses}</td>
+                  <td>{row.gamesBehind}</td>
+                  <td>{row.streak}</td>
+                  <td>{row.last10}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </Section>
   );
