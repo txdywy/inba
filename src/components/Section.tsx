@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { memo, useId, type ReactNode } from 'react';
 
 interface SectionProps {
   eyebrow?: string;
@@ -7,15 +7,19 @@ interface SectionProps {
   children: ReactNode;
 }
 
-export default function Section({ eyebrow, title, subtitle, children }: SectionProps) {
+const Section = memo(function Section({ eyebrow, title, subtitle, children }: SectionProps) {
+  const headingId = useId();
+
   return (
-    <section className="section-card">
+    <section className="section-card" aria-labelledby={headingId}>
       {eyebrow ? <p className="section-eyebrow">{eyebrow}</p> : null}
       <div className="section-heading">
-        <h2>{title}</h2>
+        <h2 id={headingId}>{title}</h2>
         {subtitle ? <p>{subtitle}</p> : null}
       </div>
       {children}
     </section>
   );
-}
+});
+
+export default Section;

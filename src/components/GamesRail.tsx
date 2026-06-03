@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { GameCard as GameCardData } from '../data/types';
 import GameCard from './GameCard';
 import Section from './Section';
@@ -6,7 +7,7 @@ interface GamesRailProps {
   games: GameCardData[];
 }
 
-export default function GamesRail({ games }: GamesRailProps) {
+const GamesRail = memo(function GamesRail({ games }: GamesRailProps) {
   return (
     <Section
       eyebrow="Live feed"
@@ -21,4 +22,6 @@ export default function GamesRail({ games }: GamesRailProps) {
       </div>
     </Section>
   );
-}
+});
+
+export default GamesRail;

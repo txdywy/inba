@@ -37,12 +37,12 @@ async function loadFeaturedPlayersFallback() {
 async function main() {
   try {
     const rawSnapshot = await fetchNbaStatsRawSnapshot();
-    const snapshot = normalizeProviderSnapshot(rawSnapshot);
+    let snapshot = normalizeProviderSnapshot(rawSnapshot);
 
     if (snapshot.featuredPlayers.length === 0) {
       const featuredPlayers = await loadFeaturedPlayersFallback();
       if (featuredPlayers.length > 0) {
-        snapshot.featuredPlayers = featuredPlayers;
+        snapshot = { ...snapshot, featuredPlayers };
         console.warn('NBA player stats unavailable; preserved featured players from the last good snapshot.');
       }
     }

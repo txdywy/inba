@@ -12,7 +12,13 @@ describe('normalizeProviderSnapshot', () => {
     expect(normalizeProviderSnapshot(expected)).toEqual(expected);
   });
 
-  it('throws a clear error when core sections are missing', () => {
-    expect(() => normalizeProviderSnapshot({} as never)).toThrow(/games/i);
+  it('gracefully degrades to empty data when core sections are missing', () => {
+    const result = normalizeProviderSnapshot({});
+    expect(result.games).toEqual([]);
+    expect(result.standings.east).toEqual([]);
+    expect(result.standings.west).toEqual([]);
+    expect(result.playoffPicture.east).toEqual([]);
+    expect(result.playoffPicture.west).toEqual([]);
+    expect(result.featuredPlayers).toEqual([]);
   });
 });

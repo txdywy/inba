@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react';
 import type { SnapshotSummary } from '../data/snapshotSummary';
 import type { Snapshot } from '../data/types';
 import { hideBrokenImage } from '../lib/imageFallback';
@@ -9,12 +10,20 @@ interface HeroSnapshotProps {
   isRefreshing: boolean;
 }
 
-export default function HeroSnapshot({ snapshot, summary, isRefreshing }: HeroSnapshotProps) {
+const HeroSnapshot = memo(function HeroSnapshot({ snapshot, summary, isRefreshing }: HeroSnapshotProps) {
   const { featuredGame, leadPlayer, eastLeader, westLeader } = summary;
-  const leftLogo = featuredGame ? createTeamLogoUrl(featuredGame.awayTeam.abbreviation) : '';
-  const rightLogo = featuredGame ? createTeamLogoUrl(featuredGame.homeTeam.abbreviation) : '';
-  const leftInitials = featuredGame ? createTeamInitials(featuredGame.awayTeam.name) : 'NBA';
-  const rightInitials = featuredGame ? createTeamInitials(featuredGame.homeTeam.name) : 'LIVE';
+
+  const { leftLogo, rightLogo, leftInitials, rightInitials } = useMemo(() => ({
+    leftLogo: featuredGame ? createTeamLogoUrl(featuredGame.awayTeam.abbreviation) : '',
+    rightLogo: featuredGame ? createTeamLogoUrl(featuredGame.homeTeam.abbreviation) : '',
+    leftInitials: featuredGame ? createTeamInitials(featuredGame.awayTeam.name) : 'NBA',
+    rightInitials: featuredGame ? createTeamInitials(featuredGame.homeTeam.name) : 'LIVE'
+  }), [featuredGame]);
+
+  const leadPlayerHeadshot = useMemo(
+    () => (leadPlayer ? createPlayerHeadshotUrl(leadPlayer.playerId) : ''),
+    [leadPlayer]
+  );
 
   return (
     <header className="hero-panel">
@@ -124,7 +133,7 @@ export default function HeroSnapshot({ snapshot, summary, isRefreshing }: HeroSn
 
           {leadPlayer ? (
             <div className="hero-spotlight">
-              <img className="hero-spotlight__photo" src={createPlayerHeadshotUrl(leadPlayer.playerId)} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
+              <img className="hero-spotlight__photo" src={leadPlayerHeadshot} alt="" aria-hidden="true" loading="lazy" onError={hideBrokenImage} />
               <div className="hero-spotlight__body">
                 <span className="hero-spotlight__eyebrow">Featured scorer</span>
                 <strong>{leadPlayer.name}</strong>
@@ -139,4 +148,6 @@ export default function HeroSnapshot({ snapshot, summary, isRefreshing }: HeroSn
       </div>
     </header>
   );
-}
+});
+
+export default HeroSnapshot;

@@ -107,18 +107,14 @@ function mapFeaturedPlayer(value: unknown): FeaturedPlayer {
   };
 }
 
-function ensureArray(value: unknown, label: string): unknown[] {
-  if (!Array.isArray(value)) {
-    throw new Error(`NBA snapshot payload is missing ${label}`);
-  }
-
-  return value;
+function safeArray(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
 }
 
 export function normalizeProviderSnapshot(raw: unknown): Snapshot {
   const payload = assertObject(raw);
   const generatedAt = asString(payload.generated_at ?? payload.generatedAt, new Date().toISOString());
-  const scoreboard = ensureArray(payload.games ?? payload.scoreboard, 'games');
+  const scoreboard = safeArray(payload.games ?? payload.scoreboard);
   const standings = assertObject(payload.standings ?? {});
   const playoffs = assertObject(payload.playoff_picture ?? payload.playoffPicture ?? payload.playoffs ?? {});
   const headline = assertObject(payload.headline ?? payload.top_story ?? {});
@@ -132,18 +128,19 @@ export function normalizeProviderSnapshot(raw: unknown): Snapshot {
       subtitle: asString(headline.subtitle, 'Latest games, standings, and playoff context')
     },
     games: scoreboard.map(mapGame),
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- payload shape is unknown
     featuredPlayers: Array.isArray(featuredPlayerSource) ? featuredPlayerSource.map(mapFeaturedPlayer) : [],
     standings: {
-      east: ensureArray(standings.east ?? standings.eastern_conference, 'east standings').map((row, index) =>
+      east: safeArray(standings.east ?? standings.eastern_conference).map((row, index) =>
         mapStandingRow(row, index + 1)
       ),
-      west: ensureArray(standings.west ?? standings.western_conference, 'west standings').map((row, index) =>
+      west: safeArray(standings.west ?? standings.western_conference).map((row, index) =>
         mapStandingRow(row, index + 1)
       )
     },
     playoffPicture: {
-      east: ensureArray(playoffs.east ?? playoffs.eastern_conference, 'east playoff picture').map(mapPlayoffRow),
-      west: ensureArray(playoffs.west ?? playoffs.western_conference, 'west playoff picture').map(mapPlayoffRow)
+      east: safeArray(playoffs.east ?? playoffs.eastern_conference).map(mapPlayoffRow),
+      west: safeArray(playoffs.west ?? playoffs.western_conference).map(mapPlayoffRow)
     }
   };
 }

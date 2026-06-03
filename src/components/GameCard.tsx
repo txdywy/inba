@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { GameCard as GameCardData } from '../data/types';
 import { hideBrokenImage } from '../lib/imageFallback';
 import { createTeamLogoUrl } from '../lib/teamArtwork';
@@ -7,14 +8,10 @@ interface GameCardProps {
   index: number;
 }
 
-export default function GameCard({ game, index }: GameCardProps) {
+const GameCard = memo(function GameCard({ game, index }: GameCardProps) {
   const awayLogo = createTeamLogoUrl(game.awayTeam.abbreviation);
   const homeLogo = createTeamLogoUrl(game.homeTeam.abbreviation);
-  const hasScore =
-    game.awayTeam.score !== null &&
-    game.awayTeam.score !== undefined &&
-    game.homeTeam.score !== null &&
-    game.homeTeam.score !== undefined;
+  const hasScore = game.awayTeam.score !== null && game.homeTeam.score !== null;
 
   return (
     <article className={`game-card game-card--${game.status} game-card--tone-${index % 3} ${hasScore ? 'game-card--scored' : 'game-card--pregame'}`}>
@@ -45,4 +42,6 @@ export default function GameCard({ game, index }: GameCardProps) {
       </div>
     </article>
   );
-}
+});
+
+export default GameCard;

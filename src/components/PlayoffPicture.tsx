@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import type { FeaturedPlayer, PlayoffRow, StandingRow } from '../data/types';
 import { hideBrokenImage } from '../lib/imageFallback';
 import { createConferenceArtwork, createPlayerHeadshotUrl, createTeamLogoUrl } from '../lib/teamArtwork';
@@ -56,7 +56,7 @@ function pickBestForm(rows: StandingRow[]) {
   }, undefined);
 }
 
-function ConferenceTree({
+const ConferenceTree = memo(function ConferenceTree({
   title,
   rows,
   standingsRows,
@@ -71,12 +71,20 @@ function ConferenceTree({
   const standingsByTeam = useMemo(() => new Map(standingsRows.map((row) => [row.team, row] as const)), [standingsRows]);
   const conferenceTeams = useMemo(() => new Set(standingsRows.map((row) => row.abbreviation.toUpperCase())), [standingsRows]);
   const topSeed = rows[0];
-  const lockedCount = rows.filter((row) => row.status === 'locked').length;
-  const playInCount = rows.filter((row) => row.status === 'play-in').length;
+
+  const { lockedCount, playInCount } = useMemo(() => {
+    let locked = 0;
+    let playIn = 0;
+    for (const row of rows) {
+      if (row.status === 'locked') locked += 1;
+      else if (row.status === 'play-in') playIn += 1;
+    }
+    return { lockedCount: locked, playInCount: playIn };
+  }, [rows]);
+
   const bestForm = useMemo(() => pickBestForm(standingsRows), [standingsRows]);
   const star = useMemo(() => pickConferencePlayer(featuredPlayers, conferenceTeams), [conferenceTeams, featuredPlayers]);
   const topSeedStanding = topSeed ? standingsByTeam.get(topSeed.team) : undefined;
-  const bestFormStanding = bestForm;
 
   return (
     <article className="bracket-column bracket-column--tree bracket-column--studio">
@@ -184,16 +192,16 @@ function ConferenceTree({
         })}
       </div>
 
-      {bestFormStanding ? (
+      {bestForm ? (
         <p className="tree-column__note">
-          {bestFormStanding.team} is carrying the sharpest recent form in the {title} field.
+          {bestForm.team} is carrying the sharpest recent form in the {title} field.
         </p>
       ) : null}
     </article>
   );
-}
+});
 
-export default function PlayoffPicture({ east, west, standings, featuredPlayers }: PlayoffPictureProps) {
+const PlayoffPicture = memo(function PlayoffPicture({ east, west, standings, featuredPlayers }: PlayoffPictureProps) {
   return (
     <Section
       eyebrow="Postseason"
@@ -206,4 +214,6 @@ export default function PlayoffPicture({ east, west, standings, featuredPlayers 
       </div>
     </Section>
   );
-}
+});
+
+export default PlayoffPicture;

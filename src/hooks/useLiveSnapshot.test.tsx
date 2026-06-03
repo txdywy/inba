@@ -8,7 +8,8 @@ import { useLiveSnapshot } from './useLiveSnapshot';
 function HookHarness({ fetchImpl }: { fetchImpl: typeof fetch }) {
   const { snapshot, isRefreshing, error } = useLiveSnapshot(fallbackSnapshot as Snapshot, {
     fetchImpl,
-    sourceUrl: '/data/latest.json'
+    sourceUrl: '/data/latest.json',
+    refreshInterval: 0 // disable polling in tests
   });
 
   return (

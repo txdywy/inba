@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { FeaturedPlayer } from '../data/types';
 import { hideBrokenImage } from '../lib/imageFallback';
 import { createPlayerHeadshotUrl, createTeamLogoUrl } from '../lib/teamArtwork';
@@ -11,7 +12,7 @@ function formatStat(value: number, label: string) {
   return `${value.toFixed(1)} ${label}`;
 }
 
-export default function FeaturedPlayersRail({ players }: FeaturedPlayersRailProps) {
+const FeaturedPlayersRail = memo(function FeaturedPlayersRail({ players }: FeaturedPlayersRailProps) {
   return (
     <Section
       eyebrow="Spotlight"
@@ -59,4 +60,6 @@ export default function FeaturedPlayersRail({ players }: FeaturedPlayersRailProp
       )}
     </Section>
   );
-}
+});
+
+export default FeaturedPlayersRail;

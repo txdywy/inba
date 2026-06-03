@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import type { StandingRow } from '../data/types';
 import { hideBrokenImage } from '../lib/imageFallback';
 import { createTeamLogoUrl } from '../lib/teamArtwork';
@@ -15,7 +15,7 @@ function renderRecord(row: StandingRow) {
   return `${row.wins}-${row.losses}`;
 }
 
-export default function StandingsTable({ eastRows, westRows }: StandingsTableProps) {
+const StandingsTable = memo(function StandingsTable({ eastRows, westRows }: StandingsTableProps) {
   const [activeConference, setActiveConference] = useState<ConferenceKey>('east');
 
   const conference = useMemo(() => {
@@ -25,7 +25,10 @@ export default function StandingsTable({ eastRows, westRows }: StandingsTablePro
   }, [activeConference, eastRows, westRows]);
 
   const leader = conference.rows[0];
-  const leaderArtwork = leader ? createTeamLogoUrl(leader.abbreviation) : '';
+  const leaderArtwork = useMemo(
+    () => (leader ? createTeamLogoUrl(leader.abbreviation) : ''),
+    [leader]
+  );
 
   return (
     <Section eyebrow="League table" title="Standings" subtitle="Toggle between conferences without leaving the right rail.">
@@ -110,4 +113,6 @@ export default function StandingsTable({ eastRows, westRows }: StandingsTablePro
       </div>
     </Section>
   );
-}
+});
+
+export default StandingsTable;

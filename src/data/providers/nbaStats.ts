@@ -228,11 +228,21 @@ function deriveSeason(date: Date = new Date()) {
   return `${startYear}-${String((startYear + 1) % 100).padStart(2, '0')}`;
 }
 
+/**
+ * Derive the approximate league phase from the current date (Eastern time).
+ *
+ * These thresholds are rough approximations of the typical NBA calendar:
+ *  - Play-in tournament: mid-April (~Apr 10-14)
+ *  - Playoffs (first round through Finals): mid-April through late June / early July
+ *  - Regular season: October through mid-April
+ *
+ * The exact dates shift each year; this heuristic is good enough for editorial framing.
+ */
 function derivePhase(date: Date = new Date()): RawSnapshot['phase'] {
   const { month, day } = getNewYorkDateParts(date);
 
   if (month === 4 && day >= 15) return 'playoffs';
-  if (month === 5 || month === 6) return 'playoffs';
+  if (month >= 5 && month <= 7) return 'playoffs'; // Finals can extend into July
   if (month === 4 && day >= 10) return 'playIn';
   return 'regularSeason';
 }
@@ -486,9 +496,14 @@ function deriveFeaturedPlayers(playerStatsPayload: StatsResponse) {
 }
 
 function deriveHeadline(games: GameCard[], phase: RawSnapshot['phase']) {
-  const liveCount = games.filter((game) => game.status === 'live').length;
-  const scheduledCount = games.filter((game) => game.status === 'scheduled').length;
-  const finalCount = games.filter((game) => game.status === 'final').length;
+  let liveCount = 0;
+  let scheduledCount = 0;
+  let finalCount = 0;
+  for (const game of games) {
+    if (game.status === 'live') liveCount += 1;
+    else if (game.status === 'scheduled') scheduledCount += 1;
+    else if (game.status === 'final') finalCount += 1;
+  }
 
   if (liveCount > 0) {
     return {

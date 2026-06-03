@@ -82,6 +82,13 @@ img {
   display: block;
 }
 
+.img--broken {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
 h1,
 h2,
 h3 {
